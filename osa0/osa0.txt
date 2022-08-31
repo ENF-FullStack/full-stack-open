@@ -3,8 +3,6 @@ Tässä tiedostossa osa0:n harjoitukset
 
 --
 
-0.4
-
 title Fullstack 0.4
 
 note over Selain
@@ -13,8 +11,8 @@ end note
 
 Selain->Palvelin: HTTP POST 302 new note
 note right of Selain: lähetetään data
-note right of Palvelin: luodaan uusi olio
-note right of Palvelin: tallennetaan olio taulukkoon Notes
+note over Palvelin: luodaan uusi olio
+note over Palvelin: tallennetaan olio taulukkoon Notes
 Palvelin->Selain: dokumentti/redirect
 note right of Selain: Uudelleenohjaus headeriin Notes
 
