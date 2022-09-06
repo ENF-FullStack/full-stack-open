@@ -13,11 +13,14 @@ const Part = (props) => {
 }
 
 const Content = (props) => {
+
+  const p = props.parts
+
   return (
     <div>
-      <Part part={props.parts[0].name} exercise={props.parts[0].exercises} />
-      <Part part={props.parts[1].name} exercise={props.parts[1].exercises} />
-      <Part part={props.parts[2].name} exercise={props.parts[2].exercises} />
+      <Part part={p[0].name} exercise={p[0].exercises} />
+      <Part part={p[1].name} exercise={p[1].exercises} />
+      <Part part={p[2].name} exercise={p[2].exercises} />
     </div>
   )
 }
