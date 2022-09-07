@@ -1,4 +1,18 @@
-import { useState } from 'react'
+import { Component, PureComponent, useState } from 'react'
+
+const Button = (props) => {
+  return (
+      <button onClick={props.handleClick}>
+          {props.text}
+      </button>
+  )
+}
+
+const StatisticLine = ({ text, value }) => {
+  if(text=="positive")
+    return (<div>{text} {value} %</div>)
+  else return (<div>{text} {value}</div>)
+}
 
 const Statistics = (props) => {
   const p = props
@@ -16,12 +30,12 @@ const Statistics = (props) => {
     return (
       <div>
         <p>
-        good {p.good}<br />
-        neutral {p.neutral}<br />
-        bad {p.bad}<br />
-        all {p.good+p.neutral+p.bad}<br />
-        average {(p.good-p.bad)/(p.good+p.neutral+p.bad)}<br />
-        positive {p.good/(p.good+p.neutral+p.bad)*100} %
+        <StatisticLine text="good" value={p.good} />
+        <StatisticLine text="neutral" value={p.neutral} />
+        <StatisticLine text="bad" value={p.bad} />
+        <StatisticLine text="all" value={p.good+p.neutral+p.bad} />
+        <StatisticLine text="average" value={(p.good-p.bad)/(p.good+p.neutral+p.bad)} />
+        <StatisticLine text="positive" value={p.good/(p.good+p.neutral+p.bad)*100} />
         </p>
       </div>
     )
@@ -34,21 +48,25 @@ const App = () => {
   const [neutral, setNeutral] = useState(0)
   const [bad, setBad] = useState(0)
 
+  const increaseGood = () => setGood(good + 1)
+  const increaseNeutral = () => setNeutral(neutral + 1)
+  const increaseBad = () => setBad(bad + 1)
+
   return (
     <div>
       <h1>give feedback</h1>
-      <p>
-        <button onClick={() => setGood(good + 1)}>
-          good
-        </button>
-        <button onClick={() => setNeutral(neutral + 1)}>
-          neutral
-        </button>
-        <button onClick={() => setBad(bad + 1)}>
-          bad
-        </button>
-
-      </p>
+        <Button
+          handleClick={increaseGood}
+          text='good'
+        />
+        <Button
+          handleClick={increaseNeutral}
+          text='neutral'
+        />
+        <Button
+          handleClick={increaseBad}
+          text='bad'
+        />
       <h1>statistics</h1>
       <Statistics good={good} neutral={neutral} bad={bad} />
     </div>
