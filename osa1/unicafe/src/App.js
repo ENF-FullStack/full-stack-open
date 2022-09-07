@@ -10,8 +10,10 @@ const Button = (props) => {
 
 const StatisticLine = ({ text, value }) => {
   if(text=="positive")
-    return (<div>{text} {value} %</div>)
-  else return (<div>{text} {value}</div>)
+    return (<tr><td>{text}</td><td>{value.toFixed(1)} %</td></tr>)
+  if(text=="average")
+    return (<tr><td>{text}</td><td>{value.toFixed(1)}</td></tr>)
+  else return (<tr><td>{text}</td><td>{value}</td></tr>)
 }
 
 const Statistics = (props) => {
@@ -21,12 +23,16 @@ const Statistics = (props) => {
   else {
     return (
       <div>
-        <StatisticLine text="good" value={p.good} />
-        <StatisticLine text="neutral" value={p.neutral} />
-        <StatisticLine text="bad" value={p.bad} />
-        <StatisticLine text="all" value={p.good+p.neutral+p.bad} />
-        <StatisticLine text="average" value={(p.good-p.bad)/(p.good+p.neutral+p.bad)} />
-        <StatisticLine text="positive" value={p.good/(p.good+p.neutral+p.bad)*100} />
+        <table>
+          <tbody>
+          <StatisticLine text="good" value={p.good} />
+          <StatisticLine text="neutral" value={p.neutral} />
+          <StatisticLine text="bad" value={p.bad} />
+          <StatisticLine text="all" value={p.good+p.neutral+p.bad} />
+          <StatisticLine text="average" value={(p.good-p.bad)/(p.good+p.neutral+p.bad)} />
+          <StatisticLine text="positive" value={p.good/(p.good+p.neutral+p.bad)*100} />
+          </tbody>
+        </table>
       </div>
     )
   }
