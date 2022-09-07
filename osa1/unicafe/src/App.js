@@ -17,26 +17,16 @@ const StatisticLine = ({ text, value }) => {
 const Statistics = (props) => {
   const p = props
   const checkP = p.good+p.neutral+p.bad
-  if(checkP==0) {
-    return (
-      <div>
-        <p>
-          No feedback given
-        </p>
-      </div>
-    )
-  }
+  if(checkP==0) return (<div>No feedback given</div>)
   else {
     return (
       <div>
-        <p>
         <StatisticLine text="good" value={p.good} />
         <StatisticLine text="neutral" value={p.neutral} />
         <StatisticLine text="bad" value={p.bad} />
         <StatisticLine text="all" value={p.good+p.neutral+p.bad} />
         <StatisticLine text="average" value={(p.good-p.bad)/(p.good+p.neutral+p.bad)} />
         <StatisticLine text="positive" value={p.good/(p.good+p.neutral+p.bad)*100} />
-        </p>
       </div>
     )
   }
