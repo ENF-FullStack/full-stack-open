@@ -2,7 +2,6 @@ import { useState } from 'react'
 
 const Button = (props) => (
   <button onClick={props.handleClick}>{props.text}</button>
-  //let randomNumber = items[Math.floor(Math.random() * items.length)]
 )
 
 const App = () => {
