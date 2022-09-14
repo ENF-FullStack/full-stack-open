@@ -1,7 +1,10 @@
-const Person = ({ person }) => {
+const Person = ({ persons, search }) => {
     return (
         <div >
-            {person.name} {person.number}
+        {persons.filter(person => 
+            person.name.toUpperCase().includes(search.toUpperCase())).map(persons => 
+            <p key={persons.id}>{persons.name} {persons.number}</p> 
+        )}
         </div>
     )
 }
