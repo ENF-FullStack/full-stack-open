@@ -3,6 +3,7 @@ import axios from 'axios'
 import Person from './components/Person'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
+import personService from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -15,15 +16,13 @@ const App = () => {
   const handleSearch = (event) => setSearchName(event.target.value)
 
   useEffect(() => {
-    //console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
+    
+    personService
+      .getAll()
       .then(response => {
-        // console.log('promise fulfilled')
         setPersons(response.data)
       })
   }, [])
-  //console.log('render', persons.length, ' persons')
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -42,8 +41,8 @@ const App = () => {
       return
     }
 
-    axios
-      .post('http://localhost:3001/persons', personObject)
+    personService
+      .create(personObject)
       .then (response => {
         setPersons(persons.concat(response.data))
         setNewName('')

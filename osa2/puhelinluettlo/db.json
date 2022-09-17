@@ -24,6 +24,16 @@
       "name": "Gloria Hawk",
       "number": "+358 44 568 8213",
       "id": 5
+    },
+    {
+      "name": "Martin Fowler",
+      "number": "+358 40 523 5584",
+      "id": 6
+    },
+    {
+      "name": "James Hetfield",
+      "number": "+358 40 856 5228",
+      "id": 7
     }
   ]
 }
