@@ -9,6 +9,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchName, setSearchName] = useState('')
+  const [taskMessage, setTaskMessage] = useState(null)
 
   const handlePerson = (event) => setNewName(event.target.value)
   const handleNumber = (event) => setNewNumber(event.target.value)
@@ -23,7 +24,18 @@ const App = () => {
       })
   }, [])
 
-  //console.log(personService)
+  const Notification = ({ message }) => {
+    if (message === null) {
+      return null
+    } 
+  
+    return (
+      <div className="task">
+        {message}
+      </div>
+    )
+  
+  }
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -54,6 +66,11 @@ const App = () => {
                 setPersons(persons.map(p => p.id !== updateId.id ? p : response))
                 setNewName('')
                 setNewNumber('')
+
+                setTaskMessage ( `Updated ${personObject.name} information` )
+                setTimeout(() => {
+                  setTaskMessage(null)
+                }, 5000)
               })
               .catch(error => {
                 console.log('fail', error)
@@ -68,6 +85,11 @@ const App = () => {
           setPersons(persons.concat(response))
           setNewName('')
           setNewNumber('')
+
+          setTaskMessage ( `Added ${personObject.name}` )
+          setTimeout(() => {
+            setTaskMessage(null)
+          }, 5000)
       })
       .catch(error => {
         console.log('fail', error)
@@ -90,6 +112,11 @@ const App = () => {
           .deletePerson(id.target.value)
           .then(response => {
             setPersons(newList)
+
+            setTaskMessage ( `Removed ${deletedName.name}` )
+            setTimeout(() => {
+            setTaskMessage(null)
+          }, 5000)
           })
       }  
   }
@@ -97,6 +124,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={taskMessage} />
       <Filter
         search={searchName}
         handle={handleSearch} />
