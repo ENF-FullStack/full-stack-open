@@ -34,21 +34,45 @@ const App = () => {
     }
 
     const checkPerson = persons.find(person => person.name === newName)
+    const checkNumber = persons.find(person => person.number === newNumber)
 
-    if (checkPerson) {
+    if (checkPerson && checkNumber) {
       window.alert(`${newName} is already added to phonebook`)
       setNewName('')
       setNewNumber('')
       return
     }
+    
+    if (checkPerson && !checkNumber) {
+      const res = window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)
+        if(res) {
+          const updateId = persons.find(person => person.name === newName)
+          Object.assign(personObject, {id: updateId.id})
+          personService
+            .update(updateId.id, personObject)
+              .then(response => {
+                setPersons(persons.map(p => p.id !== updateId.id ? p : response))
+                setNewName('')
+                setNewNumber('')
+              })
+              .catch(error => {
+                console.log('fail', error)
+              })
+        } else return
+    }
 
-    personService
+    if (!checkPerson && !checkNumber) {
+      personService
       .create(personObject)
         .then(response => {
           setPersons(persons.concat(response))
           setNewName('')
           setNewNumber('')
       })
+      .catch(error => {
+        console.log('fail', error)
+      })
+    }
   }
 
   const deletePerson = (id) => {
