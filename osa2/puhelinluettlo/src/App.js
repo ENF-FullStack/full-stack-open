@@ -51,6 +51,25 @@ const App = () => {
       })
   }
 
+  const deletePerson = (id) => {
+    id.preventDefault()
+    console.log('clicked delete' , id.target.value)
+
+    const deletedName = persons.find(person => person.id == id.target.value)
+    //console.log(deletedName.name)
+    const newList = persons.filter((person) => person.id != id.target.value)
+    //console.log(newList)
+
+    const res = window.confirm(`Delete ${deletedName.name} ?`)
+      if(res) {
+        personService
+          .deletePerson(id.target.value)
+          .then(response => {
+            setPersons(newList)
+          })
+      }  
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -63,11 +82,13 @@ const App = () => {
         name={newName}
         number={newNumber}
         hP={handlePerson}
-        hN={handleNumber} />
+        hN={handleNumber}
+      />
       <h2>Numbers</h2>
       <Person
         persons={persons}
-        search={searchName} />
+        search={searchName}
+        dP={deletePerson} />
     </div>
   )
 
