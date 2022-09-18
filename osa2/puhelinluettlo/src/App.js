@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import Person from './components/Person'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
@@ -20,9 +19,11 @@ const App = () => {
     personService
       .getAll()
       .then(response => {
-        setPersons(response.data)
+        setPersons(response)
       })
   }, [])
+
+  //console.log(personService)
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -34,7 +35,7 @@ const App = () => {
 
     const checkPerson = persons.find(person => person.name === newName)
 
-    if(checkPerson) {
+    if (checkPerson) {
       window.alert(`${newName} is already added to phonebook`)
       setNewName('')
       setNewNumber('')
@@ -43,29 +44,29 @@ const App = () => {
 
     personService
       .create(personObject)
-      .then (response => {
-        setPersons(persons.concat(response.data))
-        setNewName('')
-        setNewNumber('')
+        .then(response => {
+          setPersons(persons.concat(response))
+          setNewName('')
+          setNewNumber('')
       })
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
-        <Filter 
-        search={searchName} 
+      <Filter
+        search={searchName}
         handle={handleSearch} />
       <h3>add a new</h3>
-        <PersonForm 
-        aP={addPerson} 
-        name={newName} 
-        number={newNumber} 
-        hP={handlePerson} 
+      <PersonForm
+        aP={addPerson}
+        name={newName}
+        number={newNumber}
+        hP={handlePerson}
         hN={handleNumber} />
       <h2>Numbers</h2>
-        <Person  
-        persons={persons} 
+      <Person
+        persons={persons}
         search={searchName} />
     </div>
   )
