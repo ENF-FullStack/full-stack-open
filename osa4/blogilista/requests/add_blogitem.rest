@@ -1,9 +1,9 @@
-POST http://127.0.0.1:3003/api/blogs
+POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-    "title": "Blog 4",
-    "author": "Tim Simmons",
+    "title": "Blog 5",
+    "author": "Jim Simmons",
     "url": "http://carrioncomfort.com",
-    "likes": 12
+    "likes": 115
 }
