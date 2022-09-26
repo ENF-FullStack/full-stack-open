@@ -1,0 +1,10 @@
+GET http://127.0.0.1:3003/api/blogs
+# POST http://127.0.0.1:3003/api/blogs
+Content-Type: application/json
+
+{
+    "title": "Blog 2",
+    "author": "Karen Simmons",
+    "url": "http://carrioncomfort.com",
+    "likes": 7
+}
