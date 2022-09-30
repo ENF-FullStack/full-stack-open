@@ -126,7 +126,7 @@ describe('adding new blog items', () => {
 })
 
 describe('deleting blog item', () => {
-  test('a note can be deleted', async () => {
+  test('a blog can be deleted', async () => {
     const blogsAtStart = await helper.blogsInDb()
     const blogToDelete = blogsAtStart[0]
 
@@ -139,6 +139,8 @@ describe('deleting blog item', () => {
     expect(contents).not.toContain(blogToDelete.title)
   })
 })
+
+test('')
 
 afterAll(() => {
   mongoose.connection.close()
