@@ -3,7 +3,8 @@ Content-Type: application/json
 
 {
     "title": "Blog 5",
-    "author": "Jim Simmons",
+    "author": "Dan Simmons",
     "url": "http://carrioncomfort.com",
-    "likes": 115
+    "likes": 115,
+    "userId": "6338f188bbae13f2bdb986c6"
 }
