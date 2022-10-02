@@ -1,10 +1,11 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InZwdGVydm9uIiwiaWQiOiI2MzM4ZjE4OGJiYWUxM2YyYmRiOTg2YzYiLCJpYXQiOjE2NjQ2ODA4ODZ9.DJWxskIUZbizzKzEdS8Zj5A2MEGJMzXDn_PqvqwpCFU
 
 {
-    "title": "Blog 5",
-    "author": "Dan Simmons",
+    "title": "Blog 7",
+    "author": "Nick Simmons",
     "url": "http://carrioncomfort.com",
-    "likes": 115,
+    "likes": 25,
     "userId": "6338f188bbae13f2bdb986c6"
 }
