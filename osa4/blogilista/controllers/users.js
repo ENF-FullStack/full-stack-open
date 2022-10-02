@@ -1,5 +1,5 @@
-const bcrypt = require('bcrypt')
 const usersRouter = require('express').Router()
+const bcrypt = require('bcrypt')
 const User = require('../models/user')
 
 usersRouter.get('/', async (request, response) => {
@@ -8,7 +8,7 @@ usersRouter.get('/', async (request, response) => {
     author: 1,
     likes: 1,
   })
-  response.json(users)
+  response.status(200).json(users)
 })
 
 usersRouter.post('/', async (request, response) => {

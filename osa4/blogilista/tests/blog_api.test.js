@@ -76,24 +76,48 @@ describe('tests focusing on one blog item', () => {
 
 describe('adding new blog items', () => {
   test('adding new blog item to db', async () => {
-    const newBlog = {
-      title: 'post to mongo db',
-      author: 'VP',
-      url: 'http://mongo.db',
-      likes: 11,
+    const blogsAtStart = await helper.blogsInDb()
+
+    const newUser = {
+      username: 'jotervon',
+      name: 'Joonas Tervonen',
+      password: 'test',
     }
 
-    await api
+    await api.post('/api/users').send(newUser).expect(201)
+
+    const user = {
+      username: 'jotervon',
+      password: 'test',
+    }
+
+    const checkUser = await api.post('/api/login').send(user)
+
+    let token = checkUser.body.token
+    token = `Bearer ${token}`
+    console.log(token)
+
+    const newBlog = {
+      title: 'looking for work',
+      author: 'Joonas Tervonen',
+      url: 'http://mongo.db',
+      likes: 10,
+    }
+
+    const postBlog = await api
       .post('/api/blogs')
+      .set('Authorization', token)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
+    console.log(postBlog.text)
+
     const blogsAtEnd = await helper.blogsInDb()
-    expect(blogsAtEnd).toHaveLength(helper.initialBlog.length + 1)
+    expect(blogsAtEnd).toHaveLength(blogsAtStart.length + 1)
 
     const contents = blogsAtEnd.map((r) => r.title)
-    expect(contents).toContain('post to mongo db')
+    expect(contents).toContain(newBlog.title)
   })
 
   test('blog post with no likes > set to 0', async () => {
