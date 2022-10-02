@@ -1,11 +1,11 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InZwdGVydm9uIiwiaWQiOiI2MzM4ZjE4OGJiYWUxM2YyYmRiOTg2YzYiLCJpYXQiOjE2NjQ2ODI3NjAsImV4cCI6MTY2NDY4NjM2MH0.OgqCyoWiGRyqnfyVpMlJLjygJO8iEe_mpILlpEbJcZ4
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InZwdGVydm9uIiwiaWQiOiI2MzM4ZjE4OGJiYWUxM2YyYmRiOTg2YzYiLCJpYXQiOjE2NjQ2OTE1NTAsImV4cCI6MTY2NDY5NTE1MH0.JlGG3mq3jv2amGtcDvkYWuHeQIsbmlgCv7Fr0_8bsCo
 
 {
-    "title": "Blog 9",
-    "author": "Natalie Simmons",
+    "title": "Blog 10",
+    "author": "Neil Simmons",
     "url": "http://carrioncomfort.com",
-    "likes": 27,
+    "likes": 31,
     "userId": "6338f188bbae13f2bdb986c6"
 }
