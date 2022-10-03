@@ -104,14 +104,12 @@ describe('adding new blog items', () => {
       likes: 10,
     }
 
-    const postBlog = await api
+    await api
       .post('/api/blogs')
       .set('Authorization', token)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
-
-    console.log(postBlog.text)
 
     const blogsAtEnd = await helper.blogsInDb()
     expect(blogsAtEnd).toHaveLength(blogsAtStart.length + 1)
@@ -121,35 +119,121 @@ describe('adding new blog items', () => {
   })
 
   test('blog post with no likes > set to 0', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+
+    const newUser = {
+      username: 'jotervon',
+      name: 'Joonas Tervonen',
+      password: 'test',
+    }
+
+    await api.post('/api/users').send(newUser).expect(201)
+
+    const user = {
+      username: 'jotervon',
+      password: 'test',
+    }
+
+    const checkUser = await api.post('/api/login').send(user)
+
+    let token = checkUser.body.token
+    token = `Bearer ${token}`
+    console.log(token)
+
     const newBlog = {
-      title: 'post to mongo db',
-      author: 'VP',
+      title: 'looking for work',
+      author: 'Joonas Tervonen',
       url: 'http://mongo.db',
     }
 
     await api
       .post('/api/blogs')
+      .set('Authorization', token)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
     const blogsAtEnd = await helper.blogsInDb()
-    expect(blogsAtEnd).toHaveLength(helper.initialBlog.length + 1)
+    expect(blogsAtEnd).toHaveLength(blogsAtStart.length + 1)
 
-    const contents = blogsAtEnd.map((r) => r.likes)
-    expect(contents).toContain(0)
+    const blog = await Blog.find(newBlog)
+    expect(blog[0].likes).toBe(0)
   })
 
-  test('blog without title and url refused', async () => {
+  test('blog without url refused', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+
+    const newUser = {
+      username: 'jotervon',
+      name: 'Joonas Tervonen',
+      password: 'test',
+    }
+
+    await api.post('/api/users').send(newUser).expect(201)
+
+    const user = {
+      username: 'jotervon',
+      password: 'test',
+    }
+
+    const checkUser = await api.post('/api/login').send(user)
+
+    let token = checkUser.body.token
+    token = `Bearer ${token}`
+    console.log(token)
+
     const newBlog = {
+      title: 'Ahm missing url',
       author: 'VP',
       likes: 12,
     }
 
-    await api.post('/api/blogs').send(newBlog).expect(400)
+    await api
+      .post('/api/blogs')
+      .set('Authorization', token)
+      .send(newBlog)
+      .expect(400)
 
     const blogsAtEnd = await helper.blogsInDb()
-    expect(blogsAtEnd).toHaveLength(helper.initialBlog.length)
+    expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
+  })
+
+  test('blog without title refused', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+
+    const newUser = {
+      username: 'jotervon',
+      name: 'Joonas Tervonen',
+      password: 'test',
+    }
+
+    await api.post('/api/users').send(newUser).expect(201)
+
+    const user = {
+      username: 'jotervon',
+      password: 'test',
+    }
+
+    const checkUser = await api.post('/api/login').send(user)
+
+    let token = checkUser.body.token
+    token = `Bearer ${token}`
+    console.log(token)
+
+    const newBlog = {
+      author: 'VP',
+      url: 'http://notitle.io',
+      likes: 12,
+    }
+
+    await api
+      .post('/api/blogs')
+      .set('Authorization', token)
+      .send(newBlog)
+      .expect(400)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
   })
 })
 
