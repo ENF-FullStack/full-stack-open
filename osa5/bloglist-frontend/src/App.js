@@ -118,7 +118,7 @@ const App = () => {
       <h2>Blogs</h2>
       <ul>
         {blogs.map((blog) => (
-          <Blog key={blog.id} user={user} blog={blog} />
+          <Blog key={blog.id} user={user} blog={blog} setBlogs={setBlogs} />
         ))}
       </ul>
     </div>
