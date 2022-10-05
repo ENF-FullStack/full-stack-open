@@ -25,6 +25,15 @@ const App = () => {
     fetchBlogs()
   }, [])
 
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      blogService.setToken(user.token)
+    }
+  }, [])
+
   const handleLogin = async (ev) => {
     ev.preventDefault()
 
@@ -33,6 +42,8 @@ const App = () => {
         username,
         password,
       })
+
+      window.localStorage.setItem('loggedBlogUser', JSON.stringify(user))
 
       blogService.setToken(user.token)
 
@@ -47,6 +58,11 @@ const App = () => {
     }
 
     console.log('logging in with', username, password)
+  }
+
+  const handleLogout = () => {
+    window.localStorage.removeItem('loggedBlogUser')
+    setUser(null)
   }
 
   const handleAuthorChange = (ev) => {
@@ -138,7 +154,11 @@ const App = () => {
         loginForm()
       ) : (
         <div>
-          <p>{user.name} has logged in</p> {blogForm()}
+          <p>
+            {user.name} has logged in
+            <button onClick={handleLogout}>Logout</button>
+          </p>{' '}
+          {blogForm()}
         </div>
       )}
       <h2>Blogs</h2>
