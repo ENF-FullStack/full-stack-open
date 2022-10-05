@@ -10,6 +10,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [searchName, setSearchName] = useState('')
   const [taskMessage, setTaskMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   const handlePerson = (event) => setNewName(event.target.value)
   const handleNumber = (event) => setNewNumber(event.target.value)
@@ -24,17 +25,26 @@ const App = () => {
       })
   }, [])
 
-  const Notification = ({ message }) => {
-    if (message === null) {
+  const Notification = ({ message, error }) => {
+    if (message === null && error === null) {
       return null
-    } 
-  
-    return (
-      <div className="task">
-        {message}
-      </div>
-    )
-  
+    }
+    
+    if (message != null) {
+      return (
+        <div className="task">
+          {message}
+        </div>
+      )
+    }
+
+    if (error != null) {
+      return (
+        <div className="error">
+          {error}
+        </div>
+      )
+    }
   }
 
   const addPerson = (event) => {
@@ -92,7 +102,11 @@ const App = () => {
           }, 5000)
       })
       .catch(error => {
-        console.log('fail', error)
+        setErrorMessage(JSON.stringify(error.response.data.error))
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+        // console.log(error.response.data)
       })
     }
   }
@@ -124,7 +138,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={taskMessage} />
+      <Notification message={taskMessage} error={errorMessage} />
       <Filter
         search={searchName}
         handle={handleSearch} />
