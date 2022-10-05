@@ -8,7 +8,8 @@ import Notification from './components/Notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [notificationMessage, setNotificationMessage] = useState(null)
+  const [notificationStyle, setNotificationStyle] = useState(null)
   const [username, setUserName] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -51,9 +52,10 @@ const App = () => {
       setUserName('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage('wrong credentials')
+      setNotificationStyle('error')
+      setNotificationMessage('wrong credentials')
       setTimeout(() => {
-        setErrorMessage(null)
+        setNotificationMessage(null)
       }, 5000)
     }
 
@@ -77,7 +79,7 @@ const App = () => {
     setUrl(ev.target.value)
   }
 
-  const addBlog = (ev) => {
+  const addBlog = async (ev) => {
     ev.preventDefault()
     const blogObject = {
       title: title,
@@ -85,12 +87,21 @@ const App = () => {
       url: url,
     }
 
-    blogService.create(blogObject).then((returnBlogs) => {
-      setBlogs(blogs.concat(returnBlogs))
+    try {
+      const newBlog = await blogService.create(blogObject)
+      setBlogs(blogs.concat(newBlog))
+      setNotificationStyle('task')
+      setNotificationMessage(
+        `New blog: ${blogObject.title} by ${blogObject.author}`
+      )
+      setTimeout(() => setNotificationMessage(null), 5000)
       setAuthor('')
       setTitle('')
       setUrl('')
-    })
+    } catch (exception) {
+      setNotificationStyle('error')
+      setNotificationMessage(`${exception.error}`)
+    }
   }
 
   const loginForm = () => (
@@ -148,7 +159,7 @@ const App = () => {
   return (
     <div>
       <h1>Blogs</h1>
-      <Notification message={errorMessage} />
+      <Notification message={notificationMessage} style={notificationStyle} />
 
       {user === null ? (
         loginForm()
