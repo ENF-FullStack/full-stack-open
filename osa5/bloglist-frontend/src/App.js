@@ -20,6 +20,7 @@ const App = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       const blogs = await blogService.getAll()
+      sortBlogs(blogs)
       setBlogs(blogs)
     }
     fetchBlogs()
@@ -33,6 +34,13 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
+
+  const sortBlogs = (blogs) => {
+    blogs.sort((a, b) => {
+      return b.likes - a.likes
+    })
+    setBlogs(blogs)
+  }
 
   const handleLogin = async (ev) => {
     ev.preventDefault()
@@ -57,8 +65,6 @@ const App = () => {
         setNotificationMessage(null)
       }, 5000)
     }
-
-    console.log('logging in with', username, password)
   }
 
   const handleLogout = () => {
