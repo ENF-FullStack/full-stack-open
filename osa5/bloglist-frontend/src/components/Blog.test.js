@@ -21,6 +21,7 @@ describe('blog testing', () => {
   }
 
   const mockHandleLikes = jest.fn()
+  const mockHandleBlogs = jest.fn()
   const username = 'matervon'
   const token = '1234567890'
 
@@ -58,17 +59,20 @@ describe('blog testing', () => {
         user={testuser}
         token={token}
         handleLikes={mockHandleLikes}
+        setBlogs={mockHandleBlogs}
       />
     )
 
     const user = userEvent.setup()
-    const vbutton = await screen.findByText('View')
-    await user.click(vbutton)
+    const vbutton = screen.findByText('View')
+    user.click(vbutton)
 
-    const lbutton = await screen.findByText('Like')
-    await user.click(lbutton)
-    await user.click(lbutton)
+    const lbutton = screen.findByText('Like')
+    user.click(lbutton)
+    user.click(lbutton)
 
-    expect(mockHandleLikes.mock.calls).toHaveLength(2)
+    // expect(mockHandleLikes.mock.calls).toHaveLength(2)
+    const newLikes = screen.queryByText(/likes: 12/)
+    expect(newLikes).toBeDefined
   })
 })
