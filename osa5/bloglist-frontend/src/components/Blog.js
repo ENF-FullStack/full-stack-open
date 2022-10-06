@@ -52,7 +52,7 @@ const Blog = ({ blog, user, setBlogs, sortBlogs }) => {
   if (showDetails === false) {
     return (
       <div style={blogStyle}>
-        <div>
+        <div className="blog">
           {blog.title} by {blog.author}
           <button id="show" onClick={toggleDetails}>
             View
@@ -63,14 +63,14 @@ const Blog = ({ blog, user, setBlogs, sortBlogs }) => {
   } else {
     return (
       <div style={blogStyle}>
-        <div>
+        <div className="blog">
           {blog.title} by {blog.author}
           <button id="hide" onClick={toggleDetails}>
             Hide
           </button>
         </div>
-        <div>{blog.url}</div>
-        <div>
+        <div className="blog">{blog.url}</div>
+        <div className="blog">
           Likes: {blog.likes}
           <button id="likebutton" onClick={handleLike}>
             Like
