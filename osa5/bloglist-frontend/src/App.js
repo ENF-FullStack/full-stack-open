@@ -16,6 +16,7 @@ const App = () => {
   const [username, setUserName] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  // const [refresh, setRefresh] = useState('')
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -118,7 +119,13 @@ const App = () => {
       <h2>Blogs</h2>
       <ul>
         {blogs.map((blog) => (
-          <Blog key={blog.id} user={user} blog={blog} setBlogs={setBlogs} />
+          <Blog
+            key={blog.id}
+            user={user}
+            blog={blog}
+            setBlogs={setBlogs}
+            sortBlogs={sortBlogs}
+          />
         ))}
       </ul>
     </div>

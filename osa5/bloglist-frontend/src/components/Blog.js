@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, user, setBlogs }) => {
+const Blog = ({ blog, user, setBlogs, sortBlogs }) => {
   const [showDetails, setShowDetails] = useState(false)
   const [likes, setLikes] = useState(blog.likes)
 
@@ -21,6 +21,9 @@ const Blog = ({ blog, user, setBlogs }) => {
     blog.likes = likes + 1
     const response = await blogService.addLike(blog)
     setLikes(response.likes)
+    const blogs = await blogService.getAll()
+    // setBlogs(blogs)
+    sortBlogs(blogs)
   }
 
   const handleRemove = async () => {
