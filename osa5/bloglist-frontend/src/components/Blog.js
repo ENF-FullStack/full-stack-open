@@ -40,13 +40,16 @@ const Blog = ({ blog, user, setBlogs, sortBlogs }) => {
   }
 
   const RemoveButton = () => {
-    if (blog.user.username === user.username) {
-      return (
-        <button id="removebutton" onClick={handleRemove}>
-          Remove
-        </button>
-      )
+    if (user !== null) {
+      if (blog.user.username === user.username) {
+        return (
+          <button id="removebutton" onClick={handleRemove}>
+            Remove
+          </button>
+        )
+      }
     }
+    return
   }
 
   if (showDetails === false) {

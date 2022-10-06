@@ -6,52 +6,69 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 
-test('renders content', () => {
-  const blog = {
-    title: 'React patterns',
-    author: 'Michael Chan',
-    url: 'https://reactpatterns.com/',
-    likes: 10,
-  }
-
-  const { container } = render(<Blog blog={blog} />)
-
-  const div = container.querySelector('.blog')
-  expect(div).toHaveTextContent('React patterns')
-  expect(div).toHaveTextContent('Michael Chan')
-  expect(div).not.toHaveTextContent('https://reactpatterns.com/')
-  expect(div).not.toHaveValue(10)
-})
-
-// test does not work completely, button is not found by either role or text
-// following url + likes works, but only when url https:// was removed
-test('url and likes are rendered after View button is clicked', async () => {
+describe('blog testing', () => {
   const blog = {
     title: 'React patterns',
     author: 'Michael Chan',
     url: 'reactpatterns.com',
     likes: 10,
-    user: '464646',
+    user: { name: 'Markus Tervonen', username: 'matervon' },
   }
 
-  const tester = {
-    id: '464646',
-    name: 'Testuser',
+  const testuser = {
+    id: '123456789',
+    name: 'matervon',
   }
 
-  const mockHandler = jest.fn()
+  const mockHandleLikes = jest.fn()
+  const username = 'matervon'
+  const token = '1234567890'
 
-  render(<Blog blog={blog} user={tester} setBlogs={mockHandler} />)
+  test('renders content', () => {
+    render(<Blog blog={blog} />)
 
-  const user = userEvent.setup()
-  const button = screen.getByText('View')
-  await user.click(button)
+    let element = screen.queryByText(/React patterns by Michael Chan/)
+    expect(element).toBeDefined()
 
-  // expect(mockHandler.mock.calls).toHaveLength(1)
+    element = screen.queryByText(/reactpatterns.com/)
+    expect(element).toBeNull()
 
-  const testurl = screen.getByText('reactpatterns.com')
-  const testlikes = screen.getByText('Likes: 10')
+    element = screen.queryByText(/likes/)
+    expect(element).toBeNull()
+  })
 
-  expect(testurl).toBeDefined()
-  expect(testlikes).toBeDefined()
+  // url + likes works, but only when url https:// was removed
+  test('url and likes are rendered after View button is clicked', async () => {
+    render(<Blog blog={blog} user={username} token={token} />)
+
+    const user = userEvent.setup()
+    const button = screen.getByText('View')
+    await user.click(button)
+
+    let element = screen.queryByText(/reactpatterns.com/)
+    expect(element).not.toBe(null)
+    element = screen.queryByText(/Likes: 10/)
+    expect(element).not.toBe(null)
+  })
+
+  test('like button clicked twice', async () => {
+    render(
+      <Blog
+        blog={blog}
+        user={testuser}
+        token={token}
+        handleLikes={mockHandleLikes}
+      />
+    )
+
+    const user = userEvent.setup()
+    const vbutton = await screen.findByText('View')
+    await user.click(vbutton)
+
+    const lbutton = await screen.findByText('Like')
+    await user.click(lbutton)
+    await user.click(lbutton)
+
+    expect(mockHandleLikes.mock.calls).toHaveLength(2)
+  })
 })
