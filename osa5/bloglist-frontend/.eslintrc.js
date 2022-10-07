@@ -3,6 +3,8 @@ module.exports = {
     browser: true,
     es6: true,
     es2021: true,
+    'jest/globals': true,
+    'cypress/globals': true,
     node: true,
   },
   extends: [
@@ -16,7 +18,7 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module',
   },
-  plugins: ['react', 'prettier'],
+  plugins: ['react', 'prettier', 'jest', 'cypress'],
   rules: {
     indent: ['error', 2],
     'linebreak-style': ['error', 'unix'],
