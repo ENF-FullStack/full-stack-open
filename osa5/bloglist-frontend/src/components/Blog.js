@@ -43,7 +43,7 @@ const Blog = ({ blog, user, setBlogs, sortBlogs }) => {
     if (user !== null) {
       if (blog.user.username === user.username) {
         return (
-          <button id="removebutton" onClick={handleRemove}>
+          <button id="remove-button" onClick={handleRemove}>
             Remove
           </button>
         )
@@ -55,7 +55,7 @@ const Blog = ({ blog, user, setBlogs, sortBlogs }) => {
   if (showDetails === false) {
     return (
       <div style={blogStyle}>
-        <div className="blog">
+        <div className="blog-item">
           {blog.title} by {blog.author}
           <button id="viewblog-button" onClick={toggleDetails}>
             View
@@ -66,7 +66,7 @@ const Blog = ({ blog, user, setBlogs, sortBlogs }) => {
   } else {
     return (
       <div style={blogStyle}>
-        <div className="blog">
+        <div className="blog-item">
           {blog.title} by {blog.author}
           <button id="hide" onClick={toggleDetails}>
             Hide

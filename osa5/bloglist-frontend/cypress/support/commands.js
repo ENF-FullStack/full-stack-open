@@ -35,6 +35,16 @@ Cypress.Commands.add('createNewBlog', ({ title, author, url, likes }) => {
   })
   cy.visit('http://localhost:3000/')
 })
+
+Cypress.Commands.add('createUser', ({ name, username, password }) => {
+  const user = {
+    name,
+    username,
+    password,
+  }
+  cy.request('POST', 'http://localhost:3000/api/users', user)
+  cy.visit('http://localhost:3000')
+})
 //
 // -- This is a child command --
 // Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
