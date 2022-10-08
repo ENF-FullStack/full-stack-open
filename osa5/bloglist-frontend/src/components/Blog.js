@@ -57,7 +57,7 @@ const Blog = ({ blog, user, setBlogs, sortBlogs }) => {
       <div style={blogStyle}>
         <div className="blog">
           {blog.title} by {blog.author}
-          <button id="show" onClick={toggleDetails}>
+          <button id="viewblog-button" onClick={toggleDetails}>
             View
           </button>
         </div>
@@ -73,9 +73,9 @@ const Blog = ({ blog, user, setBlogs, sortBlogs }) => {
           </button>
         </div>
         <div className="blog">{blog.url}</div>
-        <div className="blog">
+        <div className="likes">
           Likes: {blog.likes}
-          <button id="likebutton" onClick={handleLike}>
+          <button id="like-button" onClick={handleLike}>
             Like
           </button>
         </div>

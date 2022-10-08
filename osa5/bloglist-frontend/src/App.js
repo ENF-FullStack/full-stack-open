@@ -111,13 +111,17 @@ const App = () => {
             {user.name} has logged in
             <button onClick={handleLogout}>Logout</button>
           </p>
-          <Togglable buttonLabel="new blog" ref={blogFormRef}>
+          <Togglable
+            id="addblog-button"
+            buttonLabel="new blog"
+            ref={blogFormRef}
+          >
             <BlogForm createBlog={addBlog} />
           </Togglable>
         </div>
       )}
       <h2>Blogs</h2>
-      <ul>
+      <ul id="list-blogs">
         {blogs.map((blog) => (
           <Blog
             key={blog.id}
