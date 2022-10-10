@@ -1,5 +1,6 @@
 import { asObject } from './reducers/anecdoteReducer'
 import { useSelector, useDispatch } from 'react-redux'
+import { getByTestId } from '@testing-library/react'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -7,6 +8,11 @@ const App = () => {
 
 const addAnecdote = (ev) => {
   ev.preventDefault()
+  const content = ev.target.anecdote.value
+  ev.target.anecdote.value = ''
+  dispatch({ type: 'ADDANEC', data: {
+    content: content
+  }})
 }
 
   const vote = (id) => {
