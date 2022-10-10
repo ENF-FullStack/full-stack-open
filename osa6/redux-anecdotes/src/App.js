@@ -1,6 +1,5 @@
 import { asObject } from './reducers/anecdoteReducer'
 import { useSelector, useDispatch } from 'react-redux'
-import { getByTestId } from '@testing-library/react'
 
 const App = () => {
   const dispatch = useDispatch()
