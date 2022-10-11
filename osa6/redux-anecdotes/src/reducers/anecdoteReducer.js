@@ -28,7 +28,7 @@ export const addVote = (ev) => {
   }
 }
 
-export const addNewAnecdote = (content) => {
+export const createAnecdote = (content) => {
   return {
     type: 'ADDANEC',
     data: {
