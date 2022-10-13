@@ -13,7 +13,7 @@ osa 03 27h
 osa 04 31h
 osa 05 30h
 
-osa 06 11h
+osa 06 12h
 osa 07
 osa 08
 osa 09
