@@ -1,6 +1,7 @@
 import { useState } from 'react'
-
 import { BrowserRouter as Router, Routes, Route, Link, useParams, useNavigate } from 'react-router-dom'
+
+import { useField } from './hooks'
 
 const Menu = () => {
   const padding = {
@@ -64,21 +65,29 @@ const Footer = () => (
 )
 
 const CreateNew =  (props) => {
-  const [content, setContent] = useState('')
-  const [author, setAuthor] = useState('')
-  const [info, setInfo] = useState('')
+  const content = useField('text')
+  const author = useField('text')
+  const info = useField('text')
+  
 
   const navigate = useNavigate()
 
   const handleSubmit = (e) => {
     e.preventDefault()
     props.addNew({
-      content,
-      author,
-      info,
+      content: content.inputs.value,
+      author: author.inputs.value,
+      info: info.inputs.value,
       votes: 0
     })
     navigate('/')
+  }
+
+  const handleReset = (e) => {
+    e.preventDefault()
+    content.reset()
+    author.reset()
+    info.reset()
   }
 
   return (
@@ -86,18 +95,15 @@ const CreateNew =  (props) => {
       <h2>create a new anecdote</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          content
-          <input name='content' value={content} onChange={(e) => setContent(e.target.value)} />
+          content: <input {...content.inputs} />
         </div>
         <div>
-          author
-          <input name='author' value={author} onChange={(e) => setAuthor(e.target.value)} />
+          author: <input {...author.inputs} />
         </div>
         <div>
-          url for more info
-          <input name='info' value={info} onChange={(e)=> setInfo(e.target.value)} />
+          url for more info: <input {...info.inputs} />
         </div>
-        <button>create</button>
+        <button>create</button> <button onClick={handleReset} >reset</button>
       </form>
     </div>
   )
@@ -112,6 +118,10 @@ const Notification = ({ message }) => {
 }
 
 const App = () => {
+  const author = useField('text')
+  const content = useField('text')
+  const info = useField('text')
+
   const [anecdotes, setAnecdotes] = useState([
     {
       content: 'If it hurts, do it more often',
