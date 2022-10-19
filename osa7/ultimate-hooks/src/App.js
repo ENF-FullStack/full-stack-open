@@ -18,9 +18,11 @@ const useField = (type) => {
 const useResource = (baseUrl) => {
   const [resources, setResources] = useState([])
 
-  useEffect(() => {
-    getTables()
-  }, [resources])
+  // useEffect(() => {
+  //   getTables()
+  // }, [resources])
+
+  useEffect(() => { getTables() },[])
 
   const create =  async (resource) => {
     const result = await axios.post(baseUrl, resource)
