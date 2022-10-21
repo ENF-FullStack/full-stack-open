@@ -1,18 +1,18 @@
 {
   "name": "blogilista",
   "version": "1.0.0",
-  "description": "backend osa4",
+  "description": "backend osa7",
   "main": "index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=production node index.js",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
-    "build:ui": "rm -rf build && cd ../FullStack\\ Open\\ 2022/osa2/puhelinluettlo && npm run build && cp -r build ~/Documents/study/FSO2022_p3 && cd ~/Documents/study/FSO2022_p3",
+    "build:ui": "rm -rf build && cd ../client && npm run build && cp -r build ../server && cd ../server",
     "deploy": "fly deploy",
     "deploy:full": "npm run build:ui && npm run deploy",
     "logs:prod": "fly logs",
     "lint": "eslint .",
     "test": "cross-env NODE_ENV=test jest --verbose --runInBand --forceExit",
-"start:test": "cross-env NODE_ENV=test node index.js"
+    "start:test": "cross-env NODE_ENV=test node index.js"
   },
   "author": "",
   "license": "ISC",
@@ -29,6 +29,7 @@
   "devDependencies": {
     "cross-env": "^7.0.3",
     "eslint": "^8.24.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "jest": "^29.0.3",
     "nodemon": "^2.0.20",
     "prettier": "^2.7.1",
