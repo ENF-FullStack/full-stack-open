@@ -9,23 +9,27 @@ import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
+// import store from './store'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchBlogs, createBlog } from './reducers/blogReducer'
+import { setNotification, setStyle } from './reducers/notificationReducer'
+
 const App = () => {
-  const [blogs, setBlogs] = useState([])
-  const [notificationMessage, setNotificationMessage] = useState(null)
-  const [notificationStyle, setNotificationStyle] = useState(null)
+  const dispatch = useDispatch()
+
   const [username, setUserName] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  // const [refresh, setRefresh] = useState('')
+
+  const blogs = useSelector((state) => state.blogs)
+  let blogArray = [...blogs]
+  let sortedBlogs = blogArray.sort((a, b) => {
+    return b.likes - a.likes
+  })
 
   useEffect(() => {
-    const fetchBlogs = async () => {
-      const blogs = await blogService.getAll()
-      sortBlogs(blogs)
-      setBlogs(blogs)
-    }
-    fetchBlogs()
-  }, [])
+    dispatch(fetchBlogs())
+  }, [dispatch])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogUser')
@@ -35,13 +39,6 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
-
-  const sortBlogs = (blogs) => {
-    blogs.sort((a, b) => {
-      return b.likes - a.likes
-    })
-    setBlogs(blogs)
-  }
 
   const handleLogin = async (ev) => {
     ev.preventDefault()
@@ -60,11 +57,8 @@ const App = () => {
       setUserName('')
       setPassword('')
     } catch (exception) {
-      setNotificationStyle('error')
-      setNotificationMessage('wrong credentials')
-      setTimeout(() => {
-        setNotificationMessage(null)
-      }, 5000)
+      dispatch(setStyle('error'))
+      dispatch(setNotification('wrong credentials', 5))
     }
   }
 
@@ -76,16 +70,17 @@ const App = () => {
   const addBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility()
     try {
-      const newBlog = await blogService.create(blogObject)
-      setBlogs(blogs.concat(newBlog))
-      setNotificationStyle('task')
-      setNotificationMessage(
-        `New blog: ${blogObject.title} by ${blogObject.author}`
+      dispatch(createBlog(blogObject))
+      dispatch(setStyle('task'))
+      dispatch(
+        setNotification(
+          `New blog: ${blogObject.title} by ${blogObject.author}`,
+          5
+        )
       )
-      setTimeout(() => setNotificationMessage(null), 5000)
     } catch (exception) {
-      setNotificationStyle('error')
-      setNotificationMessage(`${exception.error}`)
+      dispatch(setStyle('error'))
+      dispatch(setNotification(`${exception.error}`, 5))
     }
   }
   const blogFormRef = useRef()
@@ -93,7 +88,7 @@ const App = () => {
   return (
     <div>
       <h1>Blogs</h1>
-      <Notification message={notificationMessage} style={notificationStyle} />
+      <Notification />
 
       {user === null ? (
         <Togglable buttonLabel="login">
@@ -122,14 +117,8 @@ const App = () => {
       )}
       <h2>Blogs</h2>
       <ul id="list-blogs">
-        {blogs.map((blog) => (
-          <Blog
-            key={blog.id}
-            user={user}
-            blog={blog}
-            setBlogs={setBlogs}
-            sortBlogs={sortBlogs}
-          />
+        {sortedBlogs.map((blog) => (
+          <Blog key={blog.id} user={user} blog={blog} />
         ))}
       </ul>
     </div>

@@ -1,9 +1,12 @@
 import { useState } from 'react'
-import blogService from '../services/blogs'
+// import blogService from '../services/blogs'
+import { useDispatch } from 'react-redux'
+import { likeBlog, deleteBlog } from '../reducers/blogReducer'
 
-const Blog = ({ blog, user, setBlogs, sortBlogs }) => {
+const Blog = ({ blog, user }) => {
+  const dispatch = useDispatch()
+
   const [showDetails, setShowDetails] = useState(false)
-  const [likes, setLikes] = useState(blog.likes)
 
   const toggleDetails = () => {
     setShowDetails(!showDetails)
@@ -18,12 +21,9 @@ const Blog = ({ blog, user, setBlogs, sortBlogs }) => {
   }
 
   const handleLike = async () => {
-    blog.likes = likes + 1
-    const response = await blogService.addLike(blog)
-    setLikes(response.likes)
-    const blogs = await blogService.getAll()
-    // setBlogs(blogs)
-    sortBlogs(blogs)
+    let newLike = blog.likes + 1
+    blog = { ...blog, likes: newLike }
+    dispatch(likeBlog(blog))
   }
 
   const handleRemove = async () => {
@@ -32,10 +32,7 @@ const Blog = ({ blog, user, setBlogs, sortBlogs }) => {
 
     const checkRemove = window.confirm(`Confirm to remove ${blog.title}`)
     if (checkRemove) {
-      const response = await blogService.removeBlog({ token, id })
-      console.log(response)
-      const blogs = await blogService.getAll()
-      setBlogs(blogs)
+      dispatch(deleteBlog({ token, id }))
     }
   }
 
