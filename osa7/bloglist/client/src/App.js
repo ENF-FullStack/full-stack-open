@@ -9,11 +9,11 @@ import Togglable from './components/Togglable'
 // import blogService from './services/blogs'
 import loginService from './services/login'
 
-// import store from './store'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchBlogs, createBlog } from './reducers/blogReducer'
 import { setNotification, setStyle } from './reducers/notificationReducer'
 import { emptyUser, fetchUser, logUser } from './reducers/userReducer'
+import { fetchAllUsers } from './reducers/usersReducer'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -22,21 +22,27 @@ const App = () => {
   const [password, setPassword] = useState('')
 
   const blogs = useSelector((state) => state.blogs)
-  const user = useSelector((state) => state.users)
+  const user = useSelector((state) => state.user)
+  const users = useSelector((state) => state.users)
+
   let blogArray = [...blogs]
   let sortedBlogs = blogArray.sort((a, b) => {
     return b.likes - a.likes
   })
+  console.log('blogs:', sortedBlogs)
+
+  let userArray = [...users]
+  console.log('users: ', userArray)
 
   useEffect(() => {
     dispatch(fetchBlogs())
+    dispatch(fetchAllUsers())
   }, [dispatch])
 
   useEffect(() => {
     const checkUser = dispatch(fetchUser())
     if (checkUser !== null && checkUser.username === user.username) {
       console.log('not null user')
-      // setUser(checkUser)
       dispatch(logUser(user))
     }
   }, [])
@@ -86,23 +92,6 @@ const App = () => {
     return (
       <div>
         <Notification />
-        <LoginForm
-          username={username}
-          password={password}
-          handleUsernameChange={({ target }) => setUserName(target.value)}
-          handlePasswordChange={({ target }) => setPassword(target.value)}
-          handleSubmit={handleLogin}
-        />
-      </div>
-    )
-  }
-
-  return (
-    <div>
-      <h1>Blog app</h1>
-      <Notification />
-
-      {/* {user === null ? (
         <Togglable buttonLabel="login">
           <LoginForm
             username={username}
@@ -112,7 +101,14 @@ const App = () => {
             handleSubmit={handleLogin}
           />
         </Togglable>
-      ) : ( */}
+      </div>
+    )
+  }
+
+  return (
+    <div>
+      <h1>Blog app</h1>
+      <Notification />
       <div>
         <p>
           {user.name} has logged in
@@ -122,7 +118,21 @@ const App = () => {
           <BlogForm createBlog={addBlog} />
         </Togglable>
       </div>
-      {/* )} */}
+      <h2>Users</h2>
+      <table id="list-blogs">
+        <tr>
+          <td />
+          <td>
+            <strong>blogs created</strong>
+          </td>
+        </tr>
+        {userArray.map((user) => (
+          <tr key={user.id}>
+            <td>{user.name}</td>
+            <td>{user.blogs.length}</td>
+          </tr>
+        ))}
+      </table>
       <h2>Blogs</h2>
       <ul id="list-blogs">
         {sortedBlogs.map((blog) => (
