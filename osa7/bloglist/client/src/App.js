@@ -5,6 +5,9 @@ import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
+import BlogList from './components/BlogList'
+
+import { Routes, Route, Link } from 'react-router-dom'
 
 // import blogService from './services/blogs'
 import loginService from './services/login'
@@ -29,10 +32,8 @@ const App = () => {
   let sortedBlogs = blogArray.sort((a, b) => {
     return b.likes - a.likes
   })
-  console.log('blogs:', sortedBlogs)
 
   let userArray = [...users]
-  console.log('users: ', userArray)
 
   useEffect(() => {
     dispatch(fetchBlogs())
@@ -120,18 +121,24 @@ const App = () => {
       </div>
       <h2>Users</h2>
       <table id="list-blogs">
-        <tr>
-          <td />
-          <td>
-            <strong>blogs created</strong>
-          </td>
-        </tr>
-        {userArray.map((user) => (
-          <tr key={user.id}>
-            <td>{user.name}</td>
-            <td>{user.blogs.length}</td>
+        <thead>
+          <tr>
+            <td />
+            <td>
+              <strong>blogs created</strong>
+            </td>
           </tr>
-        ))}
+        </thead>
+        <tbody>
+          {userArray.map((user) => (
+            <tr key={user.id}>
+              <td>
+                <Link to={`/blogs/${user.id}`}>{user.name}</Link>
+              </td>
+              <td>{user.blogs.length}</td>
+            </tr>
+          ))}
+        </tbody>
       </table>
       <h2>Blogs</h2>
       <ul id="list-blogs">
@@ -139,6 +146,11 @@ const App = () => {
           <Blog key={blog.id} user={user} blog={blog} />
         ))}
       </ul>
+
+      <Routes>
+        <Route path="/blogs/:id" element={<BlogList />} />
+        <Route path="/" />
+      </Routes>
     </div>
   )
 }
