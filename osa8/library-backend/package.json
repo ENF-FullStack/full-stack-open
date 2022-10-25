@@ -11,7 +11,11 @@
   "author": "VP Tervonen",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^2.0.20"
+    "eslint": "^8.26.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.31.10",
+    "nodemon": "^2.0.20",
+    "prettier": "^2.7.1"
   },
   "dependencies": {
     "apollo-server": "^3.10.3",
