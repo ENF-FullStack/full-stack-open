@@ -37,13 +37,13 @@ export const UPDATE_AUTHOR = gql`
 `
 
 export const ALL_BOOKS = gql`
-  query {
-    allBooks {
+  query allBooks($genre: String, $author: String) {
+    allBooks(genre: $genre, author: $author) {
       title
+      published
       author {
         name
       }
-      published
       genres
     }
   }
