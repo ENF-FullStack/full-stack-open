@@ -82,6 +82,7 @@ const resolvers = {
     bookCount: () => Book.collection.countDocuments(),
     me: (root, args, { currentUser }) => currentUser,
 
+    // allAuthors: () => Author.find({}),
     allAuthors: async () => {
       const authors = await Author.find({})
       const books = await Book.find({}).populate('author')
@@ -218,11 +219,11 @@ const server = new ApolloServer({
   resolvers,
   context: async ({ req }) => {
     const auth = req ? req.headers.authorization : null
+    console.log(auth)
     if (auth && auth.toLowerCase().startsWith('bearer ')) {
       const decodedToken = jwt.verify(auth.substring(7), JWT_SECRET)
-      const currentUser = await User.findOne({
-        username: decodedToken.username,
-      })
+      const currentUser = await User.findById(decodedToken.id)
+      console.log(currentUser)
       return { currentUser }
     }
   },

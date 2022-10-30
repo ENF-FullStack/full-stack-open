@@ -1,13 +1,34 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { UPDATE_AUTHOR, ALL_AUTHORS } from './queries'
 import { useMutation } from '@apollo/client'
+import Notify from './Notify'
 
 const AuthorEdit = ({ authors }) => {
-  const [updateAuthor] = useMutation(UPDATE_AUTHOR, {
-    refetchQueries: [{ query: ALL_AUTHORS }],
+  const [updateAuthor, result] = useMutation(UPDATE_AUTHOR, {
+    onError: (error) => {
+      const message =
+        error.graphQLErrors.length > 0
+          ? error.graphQLErrors[0].message
+          : 'Update author birthyear'
+      notify(message)
+    },
+    update: (cache, response) => {
+      const dataAuthors = cache.readQuery({ query: ALL_AUTHORS })
+      const editAuthor = response.data.editAuthor
+      cache.writeQuery({
+        query: ALL_AUTHORS,
+        data: {
+          allAuthors: dataAuthors.allAuthors.map((author) =>
+            author.name === editAuthor.name ? editAuthor : author
+          ),
+        },
+      })
+    },
   })
+
   const [name, setName] = useState('')
   const [born, setBorn] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
 
   const submit = (ev) => {
     ev.preventDefault()
@@ -17,9 +38,24 @@ const AuthorEdit = ({ authors }) => {
     setBorn('')
   }
 
+  useEffect(() => {
+    if (result.data === null) {
+      Notify('No author found!')
+    }
+  }, [result.data])
+
+  const notify = (message) => {
+    setErrorMessage(message)
+    // eslint-disable-next-line no-undef
+    setTimeOut(() => {
+      setErrorMessage(null)
+    }, 5000)
+  }
+
   return (
     <div>
       <h2>set birthyear</h2>
+      <Notify errorMessage={errorMessage} />
       <form onSubmit={submit}>
         <div>
           name
