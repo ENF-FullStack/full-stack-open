@@ -15,12 +15,12 @@ const authLink = setContext((_, { headers }) => {
   return {
     headers: {
       ...headers,
-      authorization: token ? `bearer ${token}` : null,
+      authorization: token ? `Bearer ${token}` : null,
     },
   }
 })
 
-const httpLink = new HttpLink({ uri: 'http://localhost:4000/graphql' })
+const httpLink = new HttpLink({ uri: 'http://localhost:4000' })
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),

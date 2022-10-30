@@ -3,16 +3,18 @@ import { useMutation } from '@apollo/client'
 import { LOGIN } from './queries'
 import Notify from './Notify'
 
-const LoginForm = ({ setToken, setPage }) => {
+const LoginForm = ({ setToken }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
 
   const [login, result] = useMutation(LOGIN, {
+    fetchPolicy: 'no-cache',
+
     // eslint-disable-next-line no-unused-vars
-    onCompleted: (data) => {
-      setPage('authors')
-    },
+    // onCompleted: (data) => {
+    //   setPage('add')
+    // },
     onError: (error) => {
       notify(error.graphQLErrors[0].message)
     },
@@ -23,9 +25,8 @@ const LoginForm = ({ setToken, setPage }) => {
       const token = result.data.login.value
       setToken(token)
       localStorage.setItem('library-user-token', token)
-      setPage('authors')
     }
-  }, [result.data, setToken, setPage]) // eslint-disable-line
+  }, [result.data]) // eslint-disable-line
 
   const notify = (message) => {
     setErrorMessage(message)
@@ -36,8 +37,11 @@ const LoginForm = ({ setToken, setPage }) => {
 
   const submit = async (ev) => {
     ev.preventDefault()
-
     login({ variables: { username, password } })
+
+    setUsername('')
+    setPassword('')
+    // setPage('authors')
   }
 
   return (

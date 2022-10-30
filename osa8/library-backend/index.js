@@ -19,7 +19,6 @@ const JWT_SECRET = process.env.SECRET_KEY
 mongoose
   .connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
-    useUnifiedTopology: true,
   })
   .then(() => {
     console.log('connected to MongoDB')
@@ -80,7 +79,9 @@ const resolvers = {
   Query: {
     authorCount: () => Author.collection.countDocuments(),
     bookCount: () => Book.collection.countDocuments(),
-    me: (root, args, { currentUser }) => currentUser,
+    me: async (root, args, context) => {
+      return context.currentUser
+    },
 
     // allAuthors: () => Author.find({}),
     allAuthors: async () => {
@@ -200,7 +201,8 @@ const resolvers = {
         })
       }
       const user = await User.findOne({ username: args.username })
-      if (!user || args.password !== 'dummypassword') {
+      console.log(user)
+      if (!user || args.password !== 'dummy') {
         throw new UserInputError('invalid user credentials!')
       }
 
@@ -219,11 +221,9 @@ const server = new ApolloServer({
   resolvers,
   context: async ({ req }) => {
     const auth = req ? req.headers.authorization : null
-    console.log(auth)
     if (auth && auth.toLowerCase().startsWith('bearer ')) {
       const decodedToken = jwt.verify(auth.substring(7), JWT_SECRET)
       const currentUser = await User.findById(decodedToken.id)
-      console.log(currentUser)
       return { currentUser }
     }
   },
