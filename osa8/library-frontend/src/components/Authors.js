@@ -4,12 +4,12 @@ import AuthorEdit from './AuthorEdit'
 
 const Authors = (props) => {
   const authorQuery = useQuery(ALL_AUTHORS)
-  
+
   if (!props.show) {
     return null
   }
-  
-  if(authorQuery.loading) {
+
+  if (authorQuery.loading) {
     return <div>loading...</div>
   }
 
@@ -34,7 +34,7 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
-      <AuthorEdit authors={authors.map((author)=>author.name)} />
+      <AuthorEdit authors={authors.map((author) => author.name)} />
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { UPDATE_AUTHOR, ALL_AUTHORS } from './queries'
 import { useMutation } from '@apollo/client'
 

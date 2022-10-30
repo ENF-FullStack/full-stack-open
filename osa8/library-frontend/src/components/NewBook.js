@@ -4,9 +4,9 @@ import { CREATE_BOOK, ALL_AUTHORS, ALL_BOOKS } from './queries'
 
 const NewBook = (props) => {
   const [createBook] = useMutation(CREATE_BOOK, {
-    refetchQueries: [ { query: ALL_AUTHORS }, { query: ALL_BOOKS } ]
+    refetchQueries: [{ query: ALL_AUTHORS }, { query: ALL_BOOKS }],
   })
-  
+
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [published, setPublished] = useState('')
@@ -20,7 +20,9 @@ const NewBook = (props) => {
   const submit = async (event) => {
     event.preventDefault()
 
-    createBook({ variables: { title, author, published: parseInt(published), genres }})
+    createBook({
+      variables: { title, author, published: parseInt(published), genres },
+    })
 
     setTitle('')
     setPublished('')
