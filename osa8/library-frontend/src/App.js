@@ -4,24 +4,14 @@ import Books from './components/Books'
 import NewBook from './components/NewBook'
 import LoginForm from './components/LoginForm'
 import Notify from './components/Notify'
+import Recommend from './components/Recommend'
 import { useApolloClient } from '@apollo/client'
-// import { ME } from './components/queries'
 
 const App = () => {
   const [token, setToken] = useState(null)
-  // const [user, setUser] = useState(null)
   const [page, setPage] = useState('authors')
   const [errorMessage, setErrorMessage] = useState(null)
   const client = useApolloClient()
-
-  // const meQuery = useQuery(ME)
-
-  // useEffect(() => {
-  //   const savedToken = localStorage.getItem('library-user-token', token)
-  //   if (savedToken) {
-  //     setToken(savedToken)
-  //   }
-  // }, [token])
 
   const logout = () => {
     setToken(null)
@@ -29,13 +19,6 @@ const App = () => {
     client.resetStore()
     setPage('authors')
   }
-
-  // useEffect(() => {
-  //   if (meQuery.data) {
-  //     setUser(meQuery.data.me)
-  //     console.log(user)
-  //   }
-  // }, [meQuery])
 
   const notify = (message) => {
     setErrorMessage(message)
@@ -51,6 +34,9 @@ const App = () => {
         <button onClick={() => setPage('authors')}>authors</button>
         <button onClick={() => setPage('books')}>books</button>
         {token && <button onClick={() => setPage('add')}>add book</button>}
+        {token && (
+          <button onClick={() => setPage('recommend')}>recommend</button>
+        )}
         {token && <button onClick={() => logout()}>logout</button>}
         {!token && <button onClick={() => setPage('login')}>login</button>}
       </div>
@@ -59,6 +45,9 @@ const App = () => {
 
       <Authors show={page === 'authors'} />
       <Books show={page === 'books'} />
+
+      <Recommend show={page === 'recommend'} />
+
       <NewBook show={page === 'add'} />
 
       {page === 'login' && (
