@@ -1,4 +1,4 @@
-// import { useState, useEffect } from 'react'
+// import { useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { ME, ALL_BOOKS } from './queries'
 
@@ -9,21 +9,18 @@ const Recommend = (props) => {
   const { data: meData } = useQuery(ME)
 
   const { data: booksData } = useQuery(ALL_BOOKS, {
+    fetchPolicy: 'no-cache',
     variables: { genre: meData?.me?.favoriteGenre },
     skip: !meData?.me?.favoriteGenre,
+    // onCompleted: setMyBooks,
   })
+  console.log('booksData: ', booksData)
+  console.log(booksData?.allBooks)
+  // const filterBooks = Object.values(booksData?.allBooks)
+  // console.log(filterBooks)
 
-  // useQuery(ME, {
-  //   onCompleted: ({ me }) => {
-  //     setMe(me)
-  //     if (me.favoriteGenre !== null)
-  //       favBooks({ variables: { genre: me.favoriteGenre } })
-  //   },
-  // })
-
-  // useEffect(() => {
-  //   if (result.data) setMyBooks(result.data.allBooks)
-  // }, [result])
+  // const allBooks = booksData.allBooks
+  // console.log('allBooks: ', allBooks)
 
   if (!props.show) {
     return null
@@ -40,7 +37,14 @@ const Recommend = (props) => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {data.map((b) => {
+          {/* {filterBooks.map((b) => {
+            <tr key={b.title}>
+              <td>{b.title}</td>
+              <td>{b.author.name}</td>
+              <td>{b.published}</td>
+            </tr>
+          })} */}
+          {booksData?.allBooks.map((b) => {
             <tr key={b.title}>
               <td>{b.title}</td>
               <td>{b.author.name}</td>
