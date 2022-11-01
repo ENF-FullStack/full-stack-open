@@ -79,9 +79,7 @@ const resolvers = {
   Query: {
     authorCount: () => Author.collection.countDocuments(),
     bookCount: () => Book.collection.countDocuments(),
-    me: async (root, args, context) => {
-      return context.currentUser
-    },
+    me: (root, args, { currentUser }) => currentUser,
 
     // allAuthors: () => Author.find({}),
     allAuthors: async () => {
