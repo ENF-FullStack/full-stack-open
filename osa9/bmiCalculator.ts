@@ -1,5 +1,5 @@
-// type centimeters = number
-// type kilograms = number
+const height: number = Number(process.argv[2])
+const weight: number = Number(process.argv[3])
 
 const calculateBmi = (height: number, weight: number, printText: string) => {
   const bmi: number = weight / Math.pow(height / 100, 2)
@@ -16,9 +16,6 @@ const calculateBmi = (height: number, weight: number, printText: string) => {
 
   console.log(printText + result)
 }
-
-const height: number = Number(process.argv[2])
-const weight: number = Number(process.argv[3])
 
 try {
   calculateBmi(height,weight, `Height: ${height}, Weight: ${weight}, BMI: `)
