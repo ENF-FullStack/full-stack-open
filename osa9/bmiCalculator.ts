@@ -1,8 +1,8 @@
-const height: number = Number(process.argv[2])
-const weight: number = Number(process.argv[3])
+type centimeter = number
+type kilogram = number
 
-const calculateBmi = (height: number, weight: number, printText: string) => {
-  const bmi: number = weight / Math.pow(height / 100, 2)
+function calculateBmi(height: centimeter, weight: kilogram): string {
+  const bmi = weight / Math.pow(height / 100, 2)
   let result = ''
 
   if (bmi < 16) result = 'Underweight(severe)'
@@ -14,17 +14,38 @@ const calculateBmi = (height: number, weight: number, printText: string) => {
   if (bmi >= 35 && bmi < 39.9) result = 'Obese(Class II)'
   if (bmi >= 40) result = 'Obese(Class III)'
 
-  console.log(printText + result)
+  console.log(`Height: ${height}, Weight: ${weight}, BMI: ` + result)
+  return result
+}
+
+export { calculateBmi }
+
+interface MultiValues {
+  height: centimeter
+  weight: kilogram
+}
+
+const parseBmi = (args: Array<string>): MultiValues => {
+  if (args.length < 4) throw new Error('Not enough args')
+  if (args.length > 4) throw new Error('Too many args')
+
+  if (Number.isNaN(args[2]) || Number.isNaN(args[3])) {
+    throw 'Gave NaN inputs, both height and weight need to be numbers!'
+  } else {
+    return {
+      height: Number(args[2]),
+      weight: Number(args[3])
+    }
+  }
 }
 
 try {
-  calculateBmi(height,weight, `Height: ${height}, Weight: ${weight}, BMI: `)
-} catch (error: unknown) {
-  let errorMessage = 'Something went wrong.'
-  if (error instanceof Error) {
-    errorMessage += ' Error: ' + error.message
-  }
-  console.log(errorMessage)
+  const { height, weight } = parseBmi(process.argv)
+  console.log(calculateBmi(height, weight))
+} catch (error) {
+  if (error instanceof Error) console.log('Error: ', error.message)
 }
 
-export {}
+// if (process.argv.length > 2) {
+//   console.log(parseBmi(process.argv[2], process.argv[3]))
+// }
