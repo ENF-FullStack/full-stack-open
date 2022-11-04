@@ -16,9 +16,11 @@ osa 05 30h
 osa 06 15h
 osa 07 20h
 osa 08 29h
-osa 09 9h
+osa 09 12h
 osa 10
 osa 11
 osa 12
 osa 13
 osa 14
+
+Yht.  
