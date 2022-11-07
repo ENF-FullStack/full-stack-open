@@ -16,7 +16,7 @@ osa 05 30h
 osa 06 15h
 osa 07 20h
 osa 08 29h
-osa 09 15h
+osa 09 16h
 osa 10
 osa 11
 osa 12

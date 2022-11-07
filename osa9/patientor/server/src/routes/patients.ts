@@ -9,6 +9,12 @@ router.get('/', (_req, res) => {
     res.send(patientService.getPatientsNS());
 });
 
+router.get('/:id', (req, res) => {
+    const { id } = req.params
+    const patient = patientService.getPatient(id)
+    res.send(patient)
+})
+
 router.post('/', (req, res) => {
     try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
