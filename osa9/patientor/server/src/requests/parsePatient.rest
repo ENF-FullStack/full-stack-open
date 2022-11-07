@@ -1,0 +1,10 @@
+POST http://localhost:3001/api/patients
+Content-Type: application/json
+
+{
+    "name": "Ville Vallaton",
+    "dateOfBirth": "1977-12-24",
+    "gender": "male",
+    "ssn": "241277-088F",
+    "occupation": "Rascal"
+}
