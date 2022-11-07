@@ -10,10 +10,10 @@ router.get('/', (_req, res) => {
 });
 
 router.get('/:id', (req, res) => {
-    const { id } = req.params
-    const patient = patientService.getPatient(id)
-    res.send(patient)
-})
+    const { id } = req.params;
+    const patient = patientService.getPatient(id);
+    res.send(patient);
+});
 
 router.post('/', (req, res) => {
     try {
