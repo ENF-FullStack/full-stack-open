@@ -1,20 +1,21 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { apiBaseUrl } from "../constants";
-import { useStateValue } from "../state";
+import { setFetchPatient, useStateValue } from "../state";
 import HealthRatingBar from "../components/HealthRatingBar";
 
-import { Patient } from '../types';
+import { Patient, Gender } from '../types';
 
-import { Box, Table, TableHead, Typography } from "@material-ui/core";
+import { Box, Table, TableHead, Typography, SvgIconProps } from "@material-ui/core";
 import { TableCell } from "@material-ui/core";
 import { TableRow } from "@material-ui/core";
 import { TableBody } from "@material-ui/core";
+import MaleIcon from '@mui/icons-material/Male';
+import FemaleIcon from '@mui/icons-material/Female';
+import TransgenderIcon from '@mui/icons-material/Transgender';
 
 const PatientPage = () => {
 const [{patients}, dispatch] = useStateValue();
@@ -22,12 +23,15 @@ const [patient, setPatient] = useState<Patient | undefined>();
 const { id } = useParams<{ id: string }>();
 
 useEffect(() => {
-    const getPatient = async () => {
+  axios.get<void>(`${apiBaseUrl}/ping`);
+
+  const getPatient = async () => {
         try {
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             const { data: patientData } = await axios.get<Patient>(`${apiBaseUrl}/patients/${id}`);
-            dispatch({ type: 'FETCH_PATIENT', payload: patientData });
+
             setPatient(patientData);
+            dispatch(setFetchPatient(patientData));
         } catch (error: unknown) {
           let errorMessage = 'Something went wong!';
           if(axios.isAxiosError(error) && error.response) {
@@ -35,10 +39,22 @@ useEffect(() => {
           }
           console.log(errorMessage);
         }
-      };
-}, [dispatch, id, patients]);
+    };
+    getPatient();
+}, [patients, id]);
 
-if(!patients) return <div>Loading...</div>;
+if(!patients || !patient) { 
+  return <div>Loading...</div>;
+}
+
+const genderIcon = (gender: Gender): React.ReactElement<SvgIconProps> => {
+  switch(gender) {
+    case 'male': return <MaleIcon />;
+    case 'female': return <FemaleIcon />;
+    case 'other': return <TransgenderIcon />;
+    default: return <MaleIcon />;
+  }
+};
 
 return (
     <div className="App">
@@ -58,7 +74,7 @@ return (
         </TableHead>
         <TableBody>
             <TableRow>
-              <TableCell>{patient.name}</TableCell>
+              <TableCell>{patient.name} {genderIcon(patient.gender)}</TableCell>
               <TableCell>{patient.gender}</TableCell>
               <TableCell>{patient.occupation}</TableCell>
               <TableCell>
