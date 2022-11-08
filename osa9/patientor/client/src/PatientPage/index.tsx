@@ -6,9 +6,7 @@ import { useParams } from "react-router-dom";
 import { apiBaseUrl } from "../constants";
 import { setFetchPatient, useStateValue } from "../state";
 import HealthRatingBar from "../components/HealthRatingBar";
-
-import { Patient, Gender } from '../types';
-
+import { Patient, Gender, Entry, Diagnosis } from '../types';
 import { Box, Table, TableHead, Typography, SvgIconProps } from "@material-ui/core";
 import { TableCell } from "@material-ui/core";
 import { TableRow } from "@material-ui/core";
@@ -41,7 +39,7 @@ useEffect(() => {
         }
     };
     getPatient();
-}, [patients, id]);
+}, [dispatch, patients, id]);
 
 if(!patients || !patient) { 
   return <div>Loading...</div>;
@@ -67,7 +65,7 @@ return (
         <TableHead>
           <TableRow>
             <TableCell>Name</TableCell>
-            <TableCell>Gender</TableCell>
+            <TableCell>SSN</TableCell>
             <TableCell>Occupation</TableCell>
             <TableCell>Health Rating</TableCell>
           </TableRow>
@@ -75,13 +73,33 @@ return (
         <TableBody>
             <TableRow>
               <TableCell>{patient.name} {genderIcon(patient.gender)}</TableCell>
-              <TableCell>{patient.gender}</TableCell>
+              <TableCell>{patient.ssn}</TableCell>
               <TableCell>{patient.occupation}</TableCell>
               <TableCell>
                 <HealthRatingBar showText={false} rating={1} />
               </TableCell>
               {/* <TableCell>No patient</TableCell> */}
             </TableRow>
+            {patient.entries.length > 0 && (
+            <TableRow>
+            {patient.entries.map((entry: Entry) => {
+              return (
+                <TableCell key={entry.id}>
+                  <p>
+                    <b>{entry.date}</b>: <i>{entry.description}</i>
+                  </p>
+                  <ul>
+                    {entry.diagnosisCodes && entry.diagnosisCodes.map(
+                      (diagnosisCode: Diagnosis['code']) => (
+                        <li key={diagnosisCode}>{diagnosisCode}</li>
+                      )
+                    )}
+                  </ul>
+                </TableCell>
+              );
+            })}
+            </TableRow>
+            )}
         </TableBody>
       </Table>
     </div>
