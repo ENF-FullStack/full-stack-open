@@ -1,4 +1,4 @@
-import patientData from '../../data/patients';
+import patientData from '../../data/patientsNew';
 import { Patient, PatientNS, NewPatient } from '../types';
 import uuid = require('uuid');
 
