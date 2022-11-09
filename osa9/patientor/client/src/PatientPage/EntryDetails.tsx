@@ -53,10 +53,10 @@ export const HealthCheck: React.FC<({ entry: HealthCheckEntry })> = ({ entry }) 
         <div>
             <p>
                 <FavoriteBorderIcon /><br/>
-                {entry.date}<br />
-                {entry.description}<br />
-                Diagnose done by: {entry.specialist}<br />
-                Health rating: { healthRating(entry) }
+                <b>{entry.date}</b><br />
+                <i>{entry.description}</i><br />
+                Health rating: { healthRating(entry) }<br />
+                Diagnose done by: <b>{entry.specialist}</b><br />
                 { entryInfo(entry) }
             </p>
         </div>
@@ -67,10 +67,9 @@ export const OccupationHC: React.FC<({ entry: OccupationalHealthcareEntry })> = 
     return (
         <div>
             <p>
-                <MedicalInformationIcon /><br />
-                {entry.date}<br />
-                employer: {entry.employerName}<br />
-                {entry.description}<br />
+                <MedicalInformationIcon />{' '} {entry.employerName}<br />
+                <b>{entry.date}</b><br />
+                <i>{entry.description}</i><br />
                 { entryInfo(entry) }
             </p>
         </div>
@@ -82,8 +81,8 @@ export const Hospital: React.FC<({ entry: HospitalEntry})> = ({ entry }) => {
         <div>
             <p>
                 <LocalHospitalIcon /><br />
-                {entry.discharge.date}: {entry.discharge.criteria}<br />
-                {entry.description}<br />
+                <b>{entry.discharge.date}</b>: {entry.discharge.criteria}<br />
+                <i>{entry.description}</i><br />
                 { entryInfo(entry) }
             </p>
         </div>
