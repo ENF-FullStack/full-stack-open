@@ -2,21 +2,42 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+
 import { useParams } from "react-router-dom";
+import { useStateValue } from "../state";
 import { apiBaseUrl } from "../constants";
-import { setFetchPatient, useStateValue } from "../state";
-import HealthRatingBar from "../components/HealthRatingBar";
+
 import { Patient, Gender, Entry, Diagnosis } from '../types';
-import { Box, Table, TableHead, Typography, SvgIconProps } from "@material-ui/core";
+import { setDiagnosisList, setFetchPatient } from "../state";
+
+import HealthRatingBar from "../components/HealthRatingBar";
+import { Box, Table, TableHead, Typography, SvgIconProps, Divider } from "@material-ui/core";
 import { TableCell } from "@material-ui/core";
 import { TableRow } from "@material-ui/core";
 import { TableBody } from "@material-ui/core";
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 import TransgenderIcon from '@mui/icons-material/Transgender';
+import { HealthCheck, Hospital, OccupationHC } from "./EntryDetails";
+
+const assertNever = (value: never): never => {
+  throw new Error(
+    `Unhandled discriminated union member: ${JSON.stringify(value)}`
+  );
+};
+
+const EntryDetails: React.FC<({ entry: Entry })> = ({ entry }) => {
+  switch(entry.type) {
+    case "HealthCheck": return <HealthCheck entry={entry} />;
+    case "OccupationalHealthcare": return <OccupationHC entry={entry} />;
+    case "Hospital": return <Hospital entry={entry} />;
+    default: return assertNever(entry);
+  }
+};
+
 
 const PatientPage = () => {
-const [{patients}, dispatch] = useStateValue();
+const [{ patientDetails, diagnosisList }, dispatch] = useStateValue();
 const [patient, setPatient] = useState<Patient | undefined>();
 const { id } = useParams<{ id: string }>();
 
@@ -38,10 +59,26 @@ useEffect(() => {
           console.log(errorMessage);
         }
     };
-    getPatient();
-}, [dispatch, patients, id]);
 
-if(!patients || !patient) { 
+  const fetchDiagnosisList = async () => {
+    try {
+      const { data: diagnosisList } = await axios.get<Diagnosis[]>(
+        `${apiBaseUrl}/diagnoses`
+      );
+      dispatch(setDiagnosisList(diagnosisList));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+  if (Object.values(diagnosisList).length === 0) {
+    fetchDiagnosisList();
+  }
+
+  getPatient();
+}, [dispatch, patientDetails, diagnosisList, id]);
+
+if(!patient || !diagnosisList) { 
   return <div>Loading...</div>;
 }
 
@@ -58,7 +95,7 @@ return (
     <div className="App">
         <Box>
         <Typography align="center" variant="h6">
-          Patientor
+          Patient
         </Typography>
       </Box>
       <Table style={{ marginBottom: "1em" }}>
@@ -78,30 +115,23 @@ return (
               <TableCell>
                 <HealthRatingBar showText={false} rating={1} />
               </TableCell>
-              {/* <TableCell>No patient</TableCell> */}
             </TableRow>
-            {patient.entries.length > 0 && (
-            <TableRow>
-            {patient.entries.map((entry: Entry) => {
-              return (
-                <TableCell key={entry.id}>
-                  <p>
-                    <b>{entry.date}</b>: <i>{entry.description}</i>
-                  </p>
-                  <ul>
-                    {entry.diagnosisCodes && entry.diagnosisCodes.map(
-                      (diagnosisCode: Diagnosis['code']) => (
-                        <li key={diagnosisCode}>{diagnosisCode}</li>
-                      )
-                    )}
-                  </ul>
-                </TableCell>
-              );
-            })}
-            </TableRow>
-            )}
         </TableBody>
-      </Table>
+        </Table>
+          
+          {patient ?
+            <div>
+              <h3>Entries</h3>
+              {patient.entries?.map((entry: Entry) => (
+                <React.Fragment key={entry.id}>
+                  {/* <Divider /> */}
+                    <EntryDetails entry={entry} />
+                  <Divider />
+                </React.Fragment>
+              ))} 
+            </div>
+            : "no patient info"
+            }
     </div>
 );
 
