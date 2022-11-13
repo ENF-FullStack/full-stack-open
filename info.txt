@@ -15,7 +15,7 @@ osa 05 30h
 
 osa 06 15h
 osa 07 26h
-osa 08 31h
+osa 08 32h
 osa 09 26h
 osa 10
  sec 1 3h
