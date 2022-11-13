@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client'
+import { useEffect, useState } from 'react'
 import { ME, ALL_BOOKS } from './queries'
 
 const Recommend = (props) => {
@@ -9,17 +10,33 @@ const Recommend = (props) => {
     variables: { genre: meData?.me?.favoriteGenre },
     skip: !meData?.me?.favoriteGenre,
   })
-  console.log('booksData: ', booksData)
-  console.log(booksData?.allBooks)
+
+  const [recommendBooks, setRecommendBooks] = useState([])
+  const [favoriteGenre, setFavoriteGenre] = useState('')
+
+  useEffect(() => {
+    if(meData) {
+      setFavoriteGenre(meData?.me.favoriteGenre)
+    }
+  }, [ME, favoriteGenre])
+
+  useEffect(() => {
+    if(booksData) {
+      setRecommendBooks(booksData)
+    }
+  }, [ALL_BOOKS])
 
   if (!props.show) {
     return null
   }
 
+  console.log('fav: ', favoriteGenre)
+  console.log('rec:', recommendBooks)
+
   return (
     <div>
       <h2>Recommendations</h2>
-      <p>{meData.me.favoriteGenre}</p>
+      <p>Genre: <b>{favoriteGenre}</b></p>
       <table>
         <tbody>
           <tr>
