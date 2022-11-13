@@ -1,6 +1,7 @@
 const { UserInputError, AuthenticationError } = require('apollo-server')
 const jwt = require('jsonwebtoken')
-const Person = require('./models/Person')
+const Author = require('./models/Author')
+const Book = require('./models/Book')
 const User = require('./models/User')
 
 require('dotenv').config()
@@ -9,63 +10,112 @@ const JWT_SECRET = process.env.SECRET_KEY
 
 const resolvers = {
   Query: {
-    personCount: async () => Person.collection.countDocuments(),
-    allPersons: async (root, args) => {
-      if (!args.phone) {
-        return Person.find({})
-      }
+    authorCount: () => Author.collection.countDocuments(),
+    bookCount: () => Book.collection.countDocuments(),
+    me: (root, args, { currentUser }) => currentUser,
 
-      return Person.find({ phone: { $exists: args.phone === 'YES' } })
+    // allAuthors: () => Author.find({}),
+    allAuthors: async () => {
+      const authors = await Author.find({})
+      const books = await Book.find({}).populate('author')
+
+      return authors.map((author) => {
+        const bookCount = books.reduce(
+          (a, book) => (book.author.name === author.name ? a + 1 : a),
+          0
+        )
+        return {
+          name: author.name,
+          id: author._id,
+          born: author.born,
+          bookCount,
+        }
+      })
     },
-    findPerson: async (root, args) => Person.findOne({ name: args.name }),
-    me: (root, args, context) => {
-      return context.currentUser
+    allBooks: async (root, args) => {
+      if (!args.author && !args.genre) return Book.find({}).populate('author')
+
+      let books = await Book.find({}).populate('author')
+      if (args.author)
+        books = books.filter((book) => book.author.name === args.author)
+      if (args.genre)
+        books = books.filter(
+          (book) =>
+            book.genres.findIndex((genre) => genre === args.genre) !== -1
+        )
+      return books
     },
   },
-  Person: {
-    address: (root) => {
-      return {
-        street: root.street,
-        city: root.city,
-      }
-    },
-  },
+
   Mutation: {
-    addPerson: async (root, args, context) => {
-      const currentUser = context.currentUser
-
+    addBook: async (root, args, { currentUser }) => {
       if (!currentUser) {
-        throw new AuthenticationError('not authenticated')
+        throw new AuthenticationError('error in authentication!')
       }
 
-      const person = new Person({ ...args })
+      let author = await Author.findOne({ name: args.author })
+
+      if (!author) {
+        author = new Author({
+          name: args.author,
+        })
+
+        try {
+          await author.save()
+        } catch (error) {
+          throw new UserInputError(error.message, {
+            invalidArgs: args,
+          })
+        }
+      }
+
+      let book = new Book({
+        ...args,
+        author: author.id,
+      })
+
       try {
-        await person.save()
-        currentUser.friends = currentUser.friends.concat(person)
-        await currentUser.save()
+        await book.save()
       } catch (error) {
         throw new UserInputError(error.message, {
           invalidArgs: args,
         })
       }
-
-      return person
+      book = await book.populate('author')
+      return book
     },
-    editNumber: async (root, args) => {
-      const person = await Person.findOne({ name: args.name })
-      person.phone = args.phone
+    editAuthor: async (root, args, { currentUser }) => {
+      if (!currentUser) {
+        throw new AuthenticationError('error in authentication!')
+      }
 
-      try {
-        await person.save()
-      } catch (error) {
-        throw new UserInputError(error.message, {
+      if (!args.name) {
+        throw new UserInputError('missing name field!', {
           invalidArgs: args,
         })
       }
-      return person.save()
+
+      const author = await Author.findOne({ name: args.name })
+      if (!author) return null
+
+      author.born = args.setBornTo
+      return author.save().catch((error) => {
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
+        })
+      })
     },
     createUser: async (root, args) => {
-      const user = new User({ username: args.username })
+      if (!args.username || !args.favoriteGenre) {
+        throw new UserInputError('missing username and/or favoriteGenre!', {
+          invalidArgs: args,
+        })
+      }
+
+      const user = new User({
+        username: args.username,
+        favoriteGenre: args.favoriteGenre,
+      })
 
       return user.save().catch((error) => {
         throw new UserInputError(error.message, {
@@ -74,37 +124,23 @@ const resolvers = {
       })
     },
     login: async (root, args) => {
+      if (!args.username || !args.password) {
+        throw new UserInputError('missing username and/or password!', {
+          invalidArgs: args,
+        })
+      }
       const user = await User.findOne({ username: args.username })
-
-      if (!user || args.password !== 'secret') {
-        throw new UserInputError('wrong credentials')
+      console.log(user)
+      if (!user || args.password !== 'dummy') {
+        throw new UserInputError('invalid user credentials!')
       }
 
-      const userForToken = {
+      const userToken = {
         username: user.username,
         id: user._id,
       }
 
-      return { value: jwt.sign(userForToken, JWT_SECRET) }
-    },
-    addAsFriend: async (root, args, { currentUser }) => {
-      const nonFriendAlready = (person) =>
-        !currentUser.friends
-          .map((f) => f._id.toString())
-          .includes(person._id.toString())
-
-      if (!currentUser) {
-        throw new AuthenticationError('not authenticated')
-      }
-
-      const person = await Person.findOne({ name: args.name })
-      if (nonFriendAlready(person)) {
-        currentUser.friends = currentUser.friends.concat(person)
-      }
-
-      await currentUser.save()
-
-      return currentUser
+      return { value: jwt.sign(userToken, JWT_SECRET) }
     },
   },
 }
