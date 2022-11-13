@@ -7,7 +7,7 @@ const BlogList = () => {
   const list = blogs.filter((blog) => blog.user.id === id)
   return (
     <div>
-      <h2>added blogs</h2>
+      <h2>User blogs</h2>
       <ul>
         {list.map((blog) => (
           <li key={blog.id}>

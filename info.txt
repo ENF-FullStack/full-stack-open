@@ -14,10 +14,14 @@ osa 04 31h
 osa 05 30h
 
 osa 06 15h
-osa 07 20h
+osa 07 24h
 osa 08 29h
-osa 09 24h
+osa 09 26h
 osa 10
+ sec 1 3h
+ sec 2 7h
+ sec 3 8h
+ sec 4 2h
 osa 11
 osa 12
 osa 13

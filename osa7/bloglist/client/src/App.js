@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect, useRef } from 'react'
 
 import Blog from './components/Blog'
@@ -6,17 +7,20 @@ import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import BlogList from './components/BlogList'
+import Main from './components/Main'
 
 import { Routes, Route, Link } from 'react-router-dom'
 
-// import blogService from './services/blogs'
+import blogService from './services/blogs'
 import loginService from './services/login'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchBlogs, createBlog } from './reducers/blogReducer'
 import { setNotification, setStyle } from './reducers/notificationReducer'
-import { emptyUser, fetchUser, logUser } from './reducers/userReducer'
+
+import { emptyUser, logUser } from './reducers/userReducer'
 import { fetchAllUsers } from './reducers/usersReducer'
+import { setLoggedUser } from './reducers/loggedUserReducer'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -25,8 +29,8 @@ const App = () => {
   const [password, setPassword] = useState('')
 
   const blogs = useSelector((state) => state.blogs)
-  const user = useSelector((state) => state.user)
   const users = useSelector((state) => state.users)
+  const user = useSelector((state) => state.user)
 
   let blogArray = [...blogs]
   let sortedBlogs = blogArray.sort((a, b) => {
@@ -41,10 +45,14 @@ const App = () => {
   }, [dispatch])
 
   useEffect(() => {
-    const checkUser = dispatch(fetchUser())
-    if (checkUser !== null && checkUser.username === user.username) {
-      console.log('not null user')
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      dispatch(setLoggedUser(user))
       dispatch(logUser(user))
+      blogService.setToken(user.token)
+      // console.log('useEffect name: ', user.name)
+      // console.log('useEffect token: ', user.token)
     }
   }, [])
 
@@ -57,6 +65,9 @@ const App = () => {
         password,
       })
 
+      // window.localStorage.setItem('loggedBlogUser', JSON.stringify(user))
+      blogService.setToken(user.token)
+      dispatch(setLoggedUser(user))
       dispatch(logUser(user))
 
       setUserName('')
@@ -67,26 +78,32 @@ const App = () => {
     }
   }
 
-  const handleLogout = () => {
-    dispatch(emptyUser())
+  const handleLogout = async (ev) => {
+    ev.preventDefault()
+    window.localStorage.removeItem('loggedBlogUser')
+    dispatch(emptyUser(user))
+    blogService.setToken('')
+    dispatch(setLoggedUser(null))
+    console.log('logout user: ', user.name)
+    console.log('logout token: ', user.token)
   }
 
-  const addBlog = async (blogObject) => {
-    blogFormRef.current.toggleVisibility()
-    try {
-      dispatch(createBlog(blogObject))
-      dispatch(setStyle('task'))
-      dispatch(
-        setNotification(
-          `New blog: ${blogObject.title} by ${blogObject.author}`,
-          5
-        )
-      )
-    } catch (exception) {
-      dispatch(setStyle('error'))
-      dispatch(setNotification(`${exception.error}`, 5))
-    }
-  }
+  // const addBlog = async (blogObject) => {
+  //   blogFormRef.current.toggleVisibility()
+  //   try {
+  //     dispatch(createBlog(blogObject))
+  //     dispatch(setStyle('task'))
+  //     dispatch(
+  //       setNotification(
+  //         `New blog: ${blogObject.title} by ${blogObject.author}`,
+  //         5
+  //       )
+  //     )
+  //   } catch (exception) {
+  //     dispatch(setStyle('error'))
+  //     dispatch(setNotification(`${exception.error}`, 5))
+  //   }
+  // }
   const blogFormRef = useRef()
 
   if (user === null) {
@@ -110,15 +127,22 @@ const App = () => {
     <div>
       <h1>Blog app</h1>
       <Notification />
-      <div>
-        <p>
-          {user.name} has logged in
-          <button onClick={handleLogout}>Logout</button>
-        </p>
-        <Togglable id="addblog-button" buttonLabel="new blog" ref={blogFormRef}>
-          <BlogForm createBlog={addBlog} />
-        </Togglable>
-      </div>
+
+      {user && (
+        <div>
+          <p>
+            {user.name} has logged in
+            <button onClick={handleLogout}>Logout</button>
+          </p>
+          {/* <Togglable
+            id="addblog-button"
+            buttonLabel="new blog"
+            ref={blogFormRef}
+          >
+            <BlogForm createBlog={addBlog} />
+          </Togglable> */}
+        </div>
+      )}
       <h2>Users</h2>
       <table id="list-blogs">
         <thead>
@@ -149,7 +173,8 @@ const App = () => {
 
       <Routes>
         <Route path="/blogs/:id" element={<BlogList />} />
-        <Route path="/" />
+        <Route path="/" element={<Main />} />
+        {/* <Route path="/" /> */}
       </Routes>
     </div>
   )
