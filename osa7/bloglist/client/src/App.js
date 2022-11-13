@@ -1,22 +1,21 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect, useRef } from 'react'
 
-import Blog from './components/Blog'
 import Notification from './components/Notification'
-import LoginForm from './components/LoginForm'
-import BlogForm from './components/BlogForm'
-import Togglable from './components/Togglable'
+// import LoginForm from './components/LoginForm'
+// import Togglable from './components/Togglable'
 import BlogList from './components/BlogList'
 import Main from './components/Main'
+import UserList from './components/UserList'
 
 import { Routes, Route, Link } from 'react-router-dom'
 
 import blogService from './services/blogs'
-import loginService from './services/login'
+// import loginService from './services/login'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchBlogs, createBlog } from './reducers/blogReducer'
-import { setNotification, setStyle } from './reducers/notificationReducer'
+// import { setNotification, setStyle } from './reducers/notificationReducer'
 
 import { emptyUser, logUser } from './reducers/userReducer'
 import { fetchAllUsers } from './reducers/usersReducer'
@@ -37,7 +36,7 @@ const App = () => {
     return b.likes - a.likes
   })
 
-  let userArray = [...users]
+  // let userArray = [...users]
 
   useEffect(() => {
     dispatch(fetchBlogs())
@@ -56,31 +55,33 @@ const App = () => {
     }
   }, [])
 
-  const handleLogin = async (ev) => {
-    ev.preventDefault()
+  // const handleLogin = async (ev) => {
+  //   ev.preventDefault()
 
-    try {
-      const user = await loginService.login({
-        username,
-        password,
-      })
+  //   try {
+  //     const user = await loginService.login({
+  //       username,
+  //       password,
+  //     })
 
-      // window.localStorage.setItem('loggedBlogUser', JSON.stringify(user))
-      blogService.setToken(user.token)
-      dispatch(setLoggedUser(user))
-      dispatch(logUser(user))
+  //     // window.localStorage.setItem('loggedBlogUser', JSON.stringify(user))
+  //     blogService.setToken(user.token)
+  //     dispatch(setLoggedUser(user))
+  //     dispatch(logUser(user))
 
-      setUserName('')
-      setPassword('')
-    } catch (exception) {
-      dispatch(setStyle('error'))
-      dispatch(setNotification('wrong credentials', 5))
-    }
-  }
+  //     setUserName('')
+  //     setPassword('')
+  //   } catch (exception) {
+  //     dispatch(setStyle('error'))
+  //     dispatch(setNotification('wrong credentials', 5))
+  //   }
+  // }
 
+  //! logout does not clear user or token
   const handleLogout = async (ev) => {
     ev.preventDefault()
     window.localStorage.removeItem('loggedBlogUser')
+
     dispatch(emptyUser(user))
     blogService.setToken('')
     dispatch(setLoggedUser(null))
@@ -88,40 +89,26 @@ const App = () => {
     console.log('logout token: ', user.token)
   }
 
-  // const addBlog = async (blogObject) => {
-  //   blogFormRef.current.toggleVisibility()
-  //   try {
-  //     dispatch(createBlog(blogObject))
-  //     dispatch(setStyle('task'))
-  //     dispatch(
-  //       setNotification(
-  //         `New blog: ${blogObject.title} by ${blogObject.author}`,
-  //         5
-  //       )
-  //     )
-  //   } catch (exception) {
-  //     dispatch(setStyle('error'))
-  //     dispatch(setNotification(`${exception.error}`, 5))
-  //   }
-  // }
-  const blogFormRef = useRef()
+  // const blogFormRef = useRef()
 
-  if (user === null) {
-    return (
-      <div>
-        <Notification />
-        <Togglable buttonLabel="login">
-          <LoginForm
-            username={username}
-            password={password}
-            handleUsernameChange={({ target }) => setUserName(target.value)}
-            handlePasswordChange={({ target }) => setPassword(target.value)}
-            handleSubmit={handleLogin}
-          />
-        </Togglable>
-      </div>
-    )
-  }
+  // TODO refactor login
+
+  // if (user === null) {
+  //   return (
+  //     <div>
+  //       <Notification />
+  //       <Togglable buttonLabel="login">
+  //         <LoginForm
+  //           username={username}
+  //           password={password}
+  //           handleUsernameChange={({ target }) => setUserName(target.value)}
+  //           handlePasswordChange={({ target }) => setPassword(target.value)}
+  //           handleSubmit={handleLogin}
+  //         />
+  //       </Togglable>
+  //     </div>
+  //   )
+  // }
 
   return (
     <div>
@@ -134,47 +121,19 @@ const App = () => {
             {user.name} has logged in
             <button onClick={handleLogout}>Logout</button>
           </p>
-          {/* <Togglable
-            id="addblog-button"
-            buttonLabel="new blog"
-            ref={blogFormRef}
-          >
-            <BlogForm createBlog={addBlog} />
-          </Togglable> */}
         </div>
       )}
-      <h2>Users</h2>
-      <table id="list-blogs">
-        <thead>
-          <tr>
-            <td />
-            <td>
-              <strong>blogs created</strong>
-            </td>
-          </tr>
-        </thead>
-        <tbody>
-          {userArray.map((user) => (
-            <tr key={user.id}>
-              <td>
-                <Link to={`/blogs/${user.id}`}>{user.name}</Link>
-              </td>
-              <td>{user.blogs.length}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <h2>Blogs</h2>
-      <ul id="list-blogs">
-        {sortedBlogs.map((blog) => (
-          <Blog key={blog.id} user={user} blog={blog} />
-        ))}
-      </ul>
+      <Link to="/">
+        <h2>Blogs</h2>
+      </Link>
+      <Link to="/users">
+        <h2>Users</h2>
+      </Link>
 
       <Routes>
         <Route path="/blogs/:id" element={<BlogList />} />
+        <Route path="/users" element={<UserList />} />
         <Route path="/" element={<Main />} />
-        {/* <Route path="/" /> */}
       </Routes>
     </div>
   )

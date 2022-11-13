@@ -2,6 +2,7 @@ import { useState } from 'react'
 // import blogService from '../services/blogs'
 import { useDispatch } from 'react-redux'
 import { likeBlog, deleteBlog } from '../reducers/blogReducer'
+import { fetchBlogs } from '../reducers/blogReducer'
 
 const Blog = ({ blog, user }) => {
   const dispatch = useDispatch()
@@ -32,7 +33,8 @@ const Blog = ({ blog, user }) => {
 
     const checkRemove = window.confirm(`Confirm to remove ${blog.title}`)
     if (checkRemove) {
-      dispatch(deleteBlog({ token, id }))
+      await dispatch(deleteBlog({ token, id }))
+      dispatch(fetchBlogs())
     }
   }
 
