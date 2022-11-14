@@ -13,7 +13,8 @@ const Authors = (props) => {
     return <div>loading...</div>
   }
 
-  const authors = authorQuery.data.allAuthors || []
+  // const authors = authorQuery.data.allAuthors || []
+  const authors = authorQuery
 
   return (
     <div>

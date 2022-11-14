@@ -16,7 +16,7 @@ const Main = () => {
 
   const blogFormRef = useRef()
 
-  console.log('user check: ', user)
+  // console.log('user check: ', user)
   return (
     <>
       {user === null ? (

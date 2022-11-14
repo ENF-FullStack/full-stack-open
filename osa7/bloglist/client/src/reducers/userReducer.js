@@ -4,16 +4,12 @@ import userService from '../services/user'
 
 const userSlice = createSlice({
   name: 'users',
-  initialState: [],
+  initialState: null,
   reducers: {
     setUser(state, action) {
       console.log('setUser: ', action.payload)
       return action.payload
     },
-    // getUser(state, action) {
-    //   console.log('getUser: ', action.payload)
-    //   return action.payload
-    // },
     removeUser(state, action) {
       console.log('removeUser: ', action.payload)
       return null
@@ -31,18 +27,6 @@ export const logUser = (content) => {
     dispatch(setUser(user))
   }
 }
-
-// export const fetchUser = (content) => {
-//   return async (dispatch) => {
-//     console.log('content: ', content)
-//     const user = await userService.getUser(content)
-//     dispatch(getUser(user))
-// if (!user === null) {
-//   await blogService.setToken(user.token)
-//   dispatch(getUser(user))
-// }
-//   }
-// }
 
 export const emptyUser = (content) => {
   return async (dispatch) => {

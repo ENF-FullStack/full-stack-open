@@ -52,8 +52,8 @@ const App = () => {
     dispatch(emptyUser(user))
     blogService.setToken('')
     dispatch(setLoggedUser(null))
-    console.log('logout user: ', user.name)
-    console.log('logout token: ', user.token)
+    // console.log('logout user: ', user.name)
+    // console.log('logout token: ', user.token)
   }
 
   return (
