@@ -16,7 +16,9 @@ const resolvers = {
   Query: {
     authorCount: () => Author.collection.countDocuments(),
     bookCount: () => Book.collection.countDocuments(),
-    me: (root, args, { currentUser }) => currentUser,
+    me: (root, args, { currentUser }) => {
+      return currentUser
+    },
 
     // allAuthors: () => Author.find({}),
     allAuthors: async () => {
@@ -37,16 +39,32 @@ const resolvers = {
       })
     },
     allBooks: async (root, args) => {
-      if (!args.author && !args.genre) return Book.find({}).populate('author')
+      if (!args.author && !args.genre)
+        return Book.find({}).populate('author', {
+          name: 1,
+          id: 1,
+          born: 1,
+          bookCount: 1,
+        })
 
-      let books = await Book.find({}).populate('author')
-      if (args.author)
-        books = books.filter((book) => book.author.name === args.author)
-      if (args.genre)
-        books = books.filter(
-          (book) =>
-            book.genres.findIndex((genre) => genre === args.genre) !== -1
-        )
+      let books = await Book.find({}).populate('author', {
+        name: 1,
+        id: 1,
+        born: 1,
+        bookCount: 1,
+      })
+      const author = await Author.findOne({ name: args.author })
+      args.author &&
+        (books = books.filter((book) => book.author.name === author.name))
+      args.genre &&
+        (books = books.filter((book) => book.genres.includes(args.genre)))
+      // if (args.author)
+      //   books = books.filter((book) => book.author.name === args.author)
+      // if (args.genre)
+      //   books = books.filter(
+      //     (book) =>
+      //       book.genres.findIndex((genre) => genre === args.genre) !== -1
+      //   )
       return books
     },
   },

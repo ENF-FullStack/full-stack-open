@@ -1,34 +1,51 @@
 import { useQuery } from '@apollo/client'
-import { useEffect, useState } from 'react'
+// import { useEffect, useState } from 'react'
 import { ME, ALL_BOOKS } from './queries'
 
 const Recommend = (props) => {
-  const { data: meData } = useQuery(ME)
+  // const { data: meData } = useQuery(ME)
 
-  const { data: booksData } = useQuery(ALL_BOOKS, {
-    fetchPolicy: 'no-cache',
-    variables: { genre: meData?.me?.favoriteGenre },
-    skip: !meData?.me?.favoriteGenre,
-  })
+  // const { data: booksData } = useQuery(ALL_BOOKS, {
+  //   fetchPolicy: 'no-cache',
+  //   variables: { genre: meData?.me?.favoriteGenre },
+  //   skip: !meData?.me?.favoriteGenre,
+  // })
 
-  const [recommendBooks, setRecommendBooks] = useState([])
-  const [favoriteGenre, setFavoriteGenre] = useState('')
+  const user = useQuery(ME)
+  const books = useQuery(ALL_BOOKS)
 
-  useEffect(() => {
-    if(meData) {
-      setFavoriteGenre(meData?.me.favoriteGenre)
-    }
-  }, [ME, favoriteGenre])
+  // const [recommendBooks, setRecommendBooks] = useState([])
+  // const [favoriteGenre, setFavoriteGenre] = useState('')
 
-  useEffect(() => {
-    if(booksData) {
-      setRecommendBooks(booksData)
-    }
-  }, [ALL_BOOKS])
+  // useEffect(() => {
+  //   if (meData.me.favoriteGenre) {
+  //     setFavoriteGenre(meData.me.favoriteGenre)
+  //     const { data: meData } = useQuery(ME)
+  //   }
+  // }, [ME])
 
-  if (!props.show) {
+  // useEffect(() => {
+  //   if (booksData.allBooks) {
+  //     setRecommendBooks(booksData.allBooks)
+  //   }
+  // }, [ALL_BOOKS])
+
+  if (!props.show || !user.data || !books.data) {
     return null
   }
+
+  if (user.loading || books.loading) {
+    return <div>Loading...</div>
+  }
+
+  if (user.error || books.error) {
+    return <p>Something went wrong</p>
+  }
+
+  const favoriteGenre = user?.data?.me?.favoriteGenre
+  const recommendBooks = books.data.allBooks.filter((b) =>
+    b.genres.includes(favoriteGenre)
+  )
 
   console.log('fav: ', favoriteGenre)
   console.log('rec:', recommendBooks)
@@ -36,7 +53,9 @@ const Recommend = (props) => {
   return (
     <div>
       <h2>Recommendations</h2>
-      <p>Genre: <b>{favoriteGenre}</b></p>
+      <p>
+        books in your favorite genre <b>{favoriteGenre}</b>
+      </p>
       <table>
         <tbody>
           <tr>
@@ -44,7 +63,7 @@ const Recommend = (props) => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {booksData?.allBooks.map((b) => (
+          {recommendBooks.map((b) => (
             <tr key={b.title}>
               <td>{b.title}</td>
               <td>{b.author.name}</td>
