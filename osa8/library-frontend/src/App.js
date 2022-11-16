@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useApolloClient, useSubscription } from '@apollo/client'
+import { useApolloClient, useSubscription, useQuery } from '@apollo/client'
 
 import Authors from './components/Authors'
 import Books from './components/Books'
@@ -8,7 +8,7 @@ import LoginForm from './components/LoginForm'
 import Notify from './components/Notify'
 import Recommend from './components/Recommend'
 
-import { ALL_BOOKS, BOOK_ADDED } from './components/queries'
+import { ALL_AUTHORS, ALL_BOOKS, BOOK_ADDED } from './components/queries'
 
 export const updateCache = (cache, query, addedBook) => {
   const uniqByTitle = (a) => {
@@ -60,6 +60,18 @@ const App = () => {
     },
   })
 
+  const authors = useQuery(ALL_AUTHORS, {
+    pollInterval: 3000,
+  })
+
+  const books = useQuery(ALL_BOOKS, {
+    pollInterval: 3000,
+  })
+
+  if (authors.loading || books.loading) {
+    return <div>laoding...</div>
+  }
+
   return (
     <div>
       <Notify errorMessage={errorMessage} />
@@ -76,8 +88,8 @@ const App = () => {
 
       <Notify message={errorMessage} />
 
-      <Authors show={page === 'authors'} />
-      <Books show={page === 'books'} />
+      <Authors show={page === 'authors'} authors={authors.data.allAuthors} />
+      <Books show={page === 'books'} allBooks={books.data.allBooks} />
 
       <Recommend show={page === 'recommend'} />
 

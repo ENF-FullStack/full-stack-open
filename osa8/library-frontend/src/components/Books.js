@@ -25,7 +25,7 @@ const Books = (props) => {
       setSelected('All')
       setGenres(genres)
     }
-  }, [bookQuery])
+  }, [bookQuery, props.allBooks])
 
   useEffect(() => {
     if (selected === 'All') {
