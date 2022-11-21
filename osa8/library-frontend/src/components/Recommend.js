@@ -1,10 +1,10 @@
 import { useQuery, useLazyQuery } from '@apollo/client'
 import { useState, useEffect } from 'react'
-import { ME, ALL_BOOKS } from './queries'
+import { ME, ALL_BOOKS_GENRE } from './queries'
 
 const Recommend = (props) => {
   const user = useQuery(ME)
-  const [getBooks, result] = useLazyQuery(ALL_BOOKS, {
+  const [getBooks, result] = useLazyQuery(ALL_BOOKS_GENRE, {
     fetchPolicy: 'no-cache',
   })
   const [favouriteBooks, setFavouriteBooks] = useState([])
