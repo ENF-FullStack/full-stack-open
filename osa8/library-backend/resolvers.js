@@ -16,8 +16,9 @@ const resolvers = {
   Query: {
     authorCount: () => Author.collection.countDocuments(),
     bookCount: () => Book.collection.countDocuments(),
-    me: (root, args, { currentUser }) => {
-      return currentUser
+    me: (root, args, context) => {
+      console.log('user @ me', context.currentUser)
+      return context.currentUser
     },
 
     // allAuthors: () => Author.find({}),
@@ -58,13 +59,6 @@ const resolvers = {
         (books = books.filter((book) => book.author.name === author.name))
       args.genre &&
         (books = books.filter((book) => book.genres.includes(args.genre)))
-      // if (args.author)
-      //   books = books.filter((book) => book.author.name === args.author)
-      // if (args.genre)
-      //   books = books.filter(
-      //     (book) =>
-      //       book.genres.findIndex((genre) => genre === args.genre) !== -1
-      //   )
       return books
     },
   },
@@ -130,15 +124,15 @@ const resolvers = {
       })
     },
     createUser: async (root, args) => {
-      if (!args.username || !args.favoriteGenre) {
-        throw new UserInputError('missing username and/or favoriteGenre!', {
+      if (!args.username || !args.favouriteGenre) {
+        throw new UserInputError('missing username and/or favouriteGenre!', {
           invalidArgs: args,
         })
       }
 
       const user = new User({
         username: args.username,
-        favoriteGenre: args.favoriteGenre,
+        favouriteGenre: args.favouriteGenre,
       })
 
       return user.save().catch((error) => {
@@ -154,7 +148,7 @@ const resolvers = {
         })
       }
       const user = await User.findOne({ username: args.username })
-      console.log(user)
+      console.log('user @ login', user)
       if (!user || args.password !== 'dummy') {
         throw new UserInputError('invalid user credentials!')
       }
@@ -163,6 +157,9 @@ const resolvers = {
         username: user.username,
         id: user._id,
       }
+
+      // console.log('token obj', userToken)
+      // console.log('token @ login', { value: jwt.sign(userToken, JWT_SECRET) })
 
       return { value: jwt.sign(userToken, JWT_SECRET) }
     },
