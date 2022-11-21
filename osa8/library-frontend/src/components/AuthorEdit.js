@@ -1,53 +1,34 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { UPDATE_AUTHOR, ALL_AUTHORS } from './queries'
 import { useMutation } from '@apollo/client'
 import Notify from './Notify'
 
 const AuthorEdit = ({ authors }) => {
-  const [updateAuthor, result] = useMutation(UPDATE_AUTHOR, {
-    onError: (error) => {
-      const message =
-        error.graphQLErrors.length > 0
-          ? error.graphQLErrors[0].message
-          : 'Update author birthyear'
-      notify(message)
-    },
-    update: (cache, response) => {
-      const dataAuthors = cache.readQuery({ query: ALL_AUTHORS })
-      const editAuthor = response.data.editAuthor
-      cache.writeQuery({
-        query: ALL_AUTHORS,
-        data: {
-          allAuthors: dataAuthors.allAuthors.map((author) =>
-            author.name === editAuthor.name ? editAuthor : author
-          ),
-        },
-      })
-    },
-  })
 
-  const [name, setName] = useState('')
-  const [born, setBorn] = useState('')
+  const [selectedAuthor, setSelectedAuthor] = useState(authors[0])
   const [errorMessage, setErrorMessage] = useState(null)
+  const [born, setBorn] = useState('')
+
+  const [updateAuthor] = useMutation(UPDATE_AUTHOR, {
+    refetchQueries: [{ query: ALL_AUTHORS }],
+    // eslint-disable-next-line no-undef
+    onError: (error) => setErrorMessage(error.message)
+  })
 
   const submit = (ev) => {
     ev.preventDefault()
-    updateAuthor({ variables: { name, setBornTo: parseInt(born) } })
 
-    setName('')
+    updateAuthor({ variables: { name: selectedAuthor, setBornTo: parseInt(born) } })
+
+    setSelectedAuthor('')
     setBorn('')
   }
 
-  useEffect(() => {
-    if (result.data === null) {
-      Notify('No author found!')
-    }
-  }, [result.data])
-
+  // eslint-disable-next-line no-unused-vars
   const notify = (message) => {
     setErrorMessage(message)
     // eslint-disable-next-line no-undef
-    setTimeOut(() => {
+    setTimeout(() => {
       setErrorMessage(null)
     }, 5000)
   }
@@ -59,7 +40,7 @@ const AuthorEdit = ({ authors }) => {
       <form onSubmit={submit}>
         <div>
           name
-          <select value={name} onChange={({ target }) => setName(target.value)}>
+          <select value={selectedAuthor || ''} onChange={(option) => setSelectedAuthor(authors[option.target.selectedIndex])}>
             {authors.map((name, index) => (
               <option key={index} value={name}>
                 {name}
@@ -72,10 +53,10 @@ const AuthorEdit = ({ authors }) => {
           <input
             type="number"
             value={born}
-            onChange={({ target }) => setBorn(target.value)}
+            onChange={({ target }) => setBorn(parseInt(target.value))}
           />
         </div>
-        <button type="submit">update author</button>
+        <button type="submit">Update author</button>
       </form>
     </div>
   )

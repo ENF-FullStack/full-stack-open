@@ -16,7 +16,7 @@ const Recommend = (props) => {
   }, [setFavouriteBooks, result])
 
   useEffect(() => {
-    if (user.data) {
+    if (user.data && !user.data === undefined) {
       getBooks({ variables: { genre: user.data.me.favouriteGenre } })
     }
   }, [getBooks, user])

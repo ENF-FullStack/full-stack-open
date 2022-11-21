@@ -18,7 +18,7 @@ const resolvers = {
     bookCount: () => Book.collection.countDocuments(),
     me: (root, args, context) => {
       console.log('user @ me', context.currentUser)
-      return context.currentUser
+      return context.curren
     },
 
     // allAuthors: () => Author.find({}),
@@ -69,29 +69,33 @@ const resolvers = {
         throw new AuthenticationError('error in authentication!')
       }
 
-      let author = await Author.findOne({ name: args.author })
-
-      if (!author) {
-        author = new Author({
-          name: args.author,
+      const bookExists = await Book.findOne({ title: args.title })
+      if (bookExists) {
+        throw new UserInputError('Book title must be unique!', {
+          invalidArgs: args,
         })
-
-        try {
-          await author.save()
-        } catch (error) {
-          throw new UserInputError(error.message, {
-            invalidArgs: args,
-          })
-        }
       }
 
-      let book = new Book({
-        ...args,
-        author: author.id,
-      })
+      let newBook
+      let author
 
       try {
-        await book.save()
+        author = await Author.findOne({ name: args.author })
+
+        if (!author) {
+          author = new Author({
+            name: args.author,
+          })
+        }
+
+        newBook = new Book({
+          ...args,
+          author
+        })
+
+        await newBook.save()
+        // author.books = author.books.concat(savedBook._id)
+        await author.save()
       } catch (error) {
         throw new UserInputError(error.message, {
           invalidArgs: args,
@@ -99,8 +103,9 @@ const resolvers = {
       }
 
       //   book = await book.populate('author')
-      pubsub.publish('BOOK_ADDED', { bookAdded: book })
-      return book
+      pubsub.publish('BOOK_ADDED', { bookAdded: newBook })
+      console.log(newBook)
+      return newBook
     },
     editAuthor: async (root, args, { currentUser }) => {
       if (!currentUser) {
@@ -117,11 +122,14 @@ const resolvers = {
       if (!author) return null
 
       author.born = args.setBornTo
-      return author.save().catch((error) => {
+
+      try {
+        return await author.save()
+      } catch(error) {
         throw new UserInputError(error.message, {
           invalidArgs: args,
         })
-      })
+      }
     },
     createUser: async (root, args) => {
       if (!args.username || !args.favouriteGenre) {
