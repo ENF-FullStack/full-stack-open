@@ -1,60 +1,26 @@
 import { useQuery } from '@apollo/client'
-// import { useEffect, useState } from 'react'
 import { ME, ALL_BOOKS } from './queries'
 
 const Recommend = (props) => {
-  // const { data: meData } = useQuery(ME)
-
-  // const { data: booksData } = useQuery(ALL_BOOKS, {
-  //   fetchPolicy: 'no-cache',
-  //   variables: { genre: meData?.me?.favoriteGenre },
-  //   skip: !meData?.me?.favoriteGenre,
-  // })
 
   const user = useQuery(ME)
   const books = useQuery(ALL_BOOKS)
 
-  // const [recommendBooks, setRecommendBooks] = useState([])
-  // const [favoriteGenre, setFavoriteGenre] = useState('')
-
-  // useEffect(() => {
-  //   if (meData.me.favoriteGenre) {
-  //     setFavoriteGenre(meData.me.favoriteGenre)
-  //     const { data: meData } = useQuery(ME)
-  //   }
-  // }, [ME])
-
-  // useEffect(() => {
-  //   if (booksData.allBooks) {
-  //     setRecommendBooks(booksData.allBooks)
-  //   }
-  // }, [ALL_BOOKS])
-
-  if (!props.show || !user.data || !books.data) {
+  if (!props.show) {
     return null
   }
 
-  if (user.loading || books.loading) {
-    return <div>Loading...</div>
-  }
+  if (user.loading || books.loading) return <div>Loading...</div>
 
-  if (user.error || books.error) {
-    return <p>Something went wrong</p>
-  }
+  const userGenre = user.data.me.favoriteGenre
+  const recBooks = books.data.allBooks.filter((book) => book.genres.includes(userGenre))
 
-  const favoriteGenre = user?.data?.me?.favoriteGenre
-  const recommendBooks = books.data.allBooks.filter((b) =>
-    b.genres.includes(favoriteGenre)
-  )
-
-  console.log('fav: ', favoriteGenre)
-  console.log('rec:', recommendBooks)
 
   return (
     <div>
       <h2>Recommendations</h2>
       <p>
-        books in your favorite genre <b>{favoriteGenre}</b>
+        books in your favorite genre <b>{userGenre}</b>
       </p>
       <table>
         <tbody>
@@ -63,7 +29,7 @@ const Recommend = (props) => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {recommendBooks.map((b) => (
+          {recBooks.map((b) => (
             <tr key={b.title}>
               <td>{b.title}</td>
               <td>{b.author.name}</td>

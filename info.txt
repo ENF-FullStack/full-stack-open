@@ -15,15 +15,15 @@ osa 05 30h
 
 osa 06 15h
 osa 07 27h
-osa 08 34h
+osa 08 35h
 osa 09 26h
 osa 10
  sec 1 3h
  sec 2 7h
  sec 3 8h
  sec 4 7h
-osa 11 6h
-osa 12
+osa 11 19h
+osa 12 8h
 osa 13
 osa 14
 
