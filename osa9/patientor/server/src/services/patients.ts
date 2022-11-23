@@ -30,7 +30,9 @@ const addEntryToPatient = (entry: NewEntry, patient: Patient): Patient => {
     const allEntries: Entry = {...entry, id: uuidv4 };
     const changedPatient: Patient = {...patient, entries: patient.entries.concat(allEntries)};
 
-    patientData.map((patient) => (patient.id === changedPatient.id ? changedPatient : patient));
+    // patientData.map((patient) => (patient.id === changedPatient.id ? changedPatient : patient));
+
+    patientData.filter((patient) => patient.id === changedPatient.id)[0].entries.unshift(allEntries);
 
     return changedPatient;
 };
