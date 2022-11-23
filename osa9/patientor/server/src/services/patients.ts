@@ -1,5 +1,5 @@
 import patientData from '../../data/patientsNew';
-import { Patient, PatientNS, NewPatient } from '../types';
+import { Entry, Patient, PatientNS, NewPatient, NewEntry } from '../types';
 import uuid = require('uuid');
 
 const getPatients = (): Patient[] => {
@@ -25,4 +25,14 @@ const addPatient = (patient: NewPatient): Patient => {
     return newPatient;
 };
 
-export default { getPatients, getPatient, getPatientsNS, addPatient };
+const addEntryToPatient = (entry: NewEntry, patient: Patient): Patient => {
+    const uuidv4: string = uuid.v4();
+    const allEntries: Entry = {...entry, id: uuidv4 };
+    const changedPatient: Patient = {...patient, entries: patient.entries.concat(allEntries)};
+
+    patientData.map((patient) => (patient.id === changedPatient.id ? changedPatient : patient));
+
+    return changedPatient;
+};
+
+export default { getPatients, getPatient, getPatientsNS, addPatient, addEntryToPatient };

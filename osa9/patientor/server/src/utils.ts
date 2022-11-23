@@ -1,15 +1,28 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import { NewPatient, Gender } from './types';
+import { Diagnosis, NewPatient, Gender, NewEntry, NewBaseEntry, EntryTypes, Discharge, SickLeave, HealthCheckRating } from './types';
+
+// export const assertNever = (value: never): never => {
+//     throw new Error(`Unhandled discriminated union member: ${JSON.stringify(value)}`);
+// };
 
 const isString = (text: unknown): text is string => {
     return typeof text === 'string' || text instanceof String;
 };
 
-const parseString = (data: unknown): string => {
+const parseString = (data: unknown, variable: string): string => {
     if(!data || !isString(data)) {
-        throw new Error('Error: missing or wrong string');
+        throw new Error(`Error: missing or wrong string ${variable}`);
     }
     return data;
+};
+
+const parseType = (type: any, variable: string): EntryTypes => {
+    if(!type || !Object.values(EntryTypes).includes(type)) {
+        throw new Error(`Error with variable: ${variable}`);
+    }
+    return type as EntryTypes;
 };
 
 const parseGender = (gender: unknown): Gender => {
@@ -39,14 +52,94 @@ type Fields = {
     gender: unknown
     ssn: unknown
     occupation: unknown
+    entries: unknown
 };
 
 export const parsePatient = (object: Fields): NewPatient => {
     return {
-        name: parseString(object.name),
+        name: parseString(object.name, 'name'),
         dateOfBirth: parseDate(object.dateOfBirth),
-        ssn: parseString(object.ssn),
+        ssn: parseString(object.ssn, 'ssn'),
         gender: parseGender(object.gender),
-        occupation: parseString(object.occupation)
+        occupation: parseString(object.occupation, 'occupation'),
+        entries: []
     };
+};
+
+const checkHCR = (param: any): param is HealthCheckRating => {
+    return Object.values(HealthCheckRating).includes(param);
+};
+
+const parseHCR = (healthCheckRating: unknown, variable: string): HealthCheckRating => {
+    if(!healthCheckRating || !checkHCR(healthCheckRating)) {
+        throw new Error(`Error with variable: ${variable}`);
+    }
+    return healthCheckRating;
+};
+
+const parseSickLeave = (object: any, variable: string): SickLeave => {
+    if (!object) throw new Error(`Error with variable: ${variable}`);
+
+    return {
+        startDate: parseDate(object.startDate),
+        endDate: parseDate(object.endDate),
+    };
+};
+
+const parseDischarge = (object: any, variable: string): Discharge => {
+    if(!object) throw new Error(`Error with variable: ${variable}`);
+
+    return {
+        date: parseDate(object.date),
+        criteria: parseString(object.criteria, 'discharge criteria')
+    };
+};
+
+const parseDiagnosisCodes = (diagnosisCodes: any, variable: string): Array<Diagnosis['code']> => {
+    if (!diagnosisCodes || !(diagnosisCodes instanceof Array) || !diagnosisCodes.some(isNaN)) {
+        throw new Error(`Error with variable: ${variable}`);
+    }
+    return diagnosisCodes;
+};
+
+type ValidateEntryFields = { description: unknown; date: unknown; specialist: unknown; diagnosisCodes?: unknown; type: unknown };
+
+const validateEntry = ({ type, description, date, specialist, diagnosisCodes }: ValidateEntryFields): ValidateEntryFields => {
+    const newBaseEntry: NewBaseEntry = {
+        type: parseType(type, 'type'),
+        description: parseString(description, 'description'),
+        date: parseDate(date),
+        specialist: parseString(specialist, 'specialist'),
+    };
+
+    if (diagnosisCodes) {
+        newBaseEntry.diagnosisCodes = parseDiagnosisCodes(diagnosisCodes, 'diagnosis codes');
+    }
+    return newBaseEntry;
+};
+
+export const parseEntry = (object: any): NewEntry => {
+    const newBaseEntry = validateEntry(object) as NewEntry;
+
+    switch (newBaseEntry.type) {
+        case EntryTypes.health_check:
+            return {
+                ...newBaseEntry,
+                healthCheckRating: parseHCR(object.healthCheckRating, 'health check rating'),
+            };
+        case EntryTypes.occupational_HC:
+            const newEntry = {
+                ...newBaseEntry,
+                employerName: parseString(object.employerName, 'employer name'),
+            };
+
+            if (object.sickLeave) {
+                newEntry.sickLeave = parseSickLeave(object.sickLeave, 'sick leave');
+            }
+            return newEntry;
+        case EntryTypes.hospital:
+            return {...newBaseEntry, discharge: parseDischarge(object.discharge, 'discharge')};
+        // default: return assertNever(newBaseEntry);
+        default: throw Error('Invalid entry');
+    }
 };
