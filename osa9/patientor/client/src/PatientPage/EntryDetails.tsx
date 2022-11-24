@@ -51,14 +51,12 @@ switch (entry.healthCheckRating) {
 export const HealthCheck: React.FC<({ entry: HealthCheckEntry })> = ({ entry }) => {
     return (
         <div>
-            <p>
-                <FavoriteBorderIcon /><br/>
-                <b>{entry.date}</b><br />
-                <i>{entry.description}</i><br />
-                Health rating: { healthRating(entry) }<br />
-                Diagnose done by: <b>{entry.specialist}</b><br />
-                { entryInfo(entry) }
-            </p>
+            <FavoriteBorderIcon /><br/>
+            <b>{entry.date}</b><br />
+            <i>{entry.description}</i><br />
+            Health rating: { healthRating(entry) }<br />
+            Diagnose done by: <b>{entry.specialist}</b><br />
+            { entryInfo(entry) }
         </div>
     );
 };
@@ -66,12 +64,10 @@ export const HealthCheck: React.FC<({ entry: HealthCheckEntry })> = ({ entry }) 
 export const OccupationHC: React.FC<({ entry: OccupationalHealthcareEntry })> = ({ entry }) => {
     return (
         <div>
-            <p>
-                <MedicalInformationIcon />{' '} {entry.employerName}<br />
-                <b>{entry.date}</b><br />
-                <i>{entry.description}</i><br />
-                { entryInfo(entry) }
-            </p>
+            <MedicalInformationIcon />{' '} {entry.employerName}<br />
+            <b>{entry.date}</b><br />
+            <i>{entry.description}</i><br />
+            { entryInfo(entry) }
         </div>
     );
 };
@@ -79,12 +75,10 @@ export const OccupationHC: React.FC<({ entry: OccupationalHealthcareEntry })> = 
 export const Hospital: React.FC<({ entry: HospitalEntry})> = ({ entry }) => {
     return (
         <div>
-            <p>
-                <LocalHospitalIcon /><br />
-                <b>{entry.discharge.date}</b>: {entry.discharge.criteria}<br />
-                <i>{entry.description}</i><br />
-                { entryInfo(entry) }
-            </p>
+            <LocalHospitalIcon /><br />
+            <b>{entry.discharge.date}</b>: {entry.discharge.criteria}<br />
+            <i>{entry.description}</i><br />
+            { entryInfo(entry) }
         </div>
     );
 };

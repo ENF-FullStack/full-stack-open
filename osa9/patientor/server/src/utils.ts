@@ -95,9 +95,10 @@ const parseDischarge = (object: any, variable: string): Discharge => {
     };
 };
 
-const parseDiagnosisCodes = (diagnosisCodes: any, variable: string): Array<Diagnosis['code']> => {
+// const parseDiagnosisCodes = (diagnosisCodes: any, variable: string): Array<Diagnosis['code']> => {
+    const parseDiagnosisCodes = (diagnosisCodes: any): Array<Diagnosis['code']> => {
     if (!diagnosisCodes || !(diagnosisCodes instanceof Array) || !diagnosisCodes.some(isNaN)) {
-        throw new Error(`Error with variable: ${variable}`);
+        throw new Error(`Error with variable: diagnosis codes @ utils`);
     }
     return diagnosisCodes;
 };
@@ -113,7 +114,7 @@ const validateEntry = ({ type, description, date, specialist, diagnosisCodes }: 
     };
 
     if (diagnosisCodes) {
-        newBaseEntry.diagnosisCodes = parseDiagnosisCodes(diagnosisCodes, 'diagnosis codes');
+        newBaseEntry.diagnosisCodes = parseDiagnosisCodes(diagnosisCodes);
     }
     return newBaseEntry;
 };
