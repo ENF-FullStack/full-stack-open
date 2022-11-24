@@ -8,10 +8,10 @@ import { useStateValue } from "../state";
 import { apiBaseUrl } from "../constants";
 
 import { Patient, Gender, Entry, Diagnosis } from '../types';
-import { setDiagnosisList, setFetchPatient } from "../state";
+import { setDiagnosisList, setFetchPatient, addEntry } from "../state";
 
 import HealthRatingBar from "../components/HealthRatingBar";
-import { Box, Table, TableHead, Typography, SvgIconProps, Divider } from "@material-ui/core";
+import { Box, Table, TableHead, Typography, SvgIconProps, Divider, Button } from "@material-ui/core";
 import { TableCell } from "@material-ui/core";
 import { TableRow } from "@material-ui/core";
 import { TableBody } from "@material-ui/core";
@@ -19,6 +19,8 @@ import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 import TransgenderIcon from '@mui/icons-material/Transgender';
 import { HealthCheck, Hospital, OccupationHC } from "./EntryDetails";
+import { HealthEntryFormValues } from "../AddEntryModal/AddHealthEntryForm";
+import AddHealthEntryModal from '../AddEntryModal/index';
 
 const assertNever = (value: never): never => {
   throw new Error(
@@ -40,6 +42,15 @@ const PatientPage = () => {
 const [{ patientDetails, diagnosisList }, dispatch] = useStateValue();
 const [patient, setPatient] = useState<Patient | undefined>();
 const { id } = useParams<{ id: string }>();
+
+const [error, setError] = React.useState<string | undefined>();
+const [modalOpen, setModalOpen] = React.useState<boolean>(false);
+const openModal = (): void => setModalOpen(true);
+
+const closeModal = (): void => {
+  setModalOpen(false);
+  setError(undefined);
+};
 
 useEffect(() => {
   axios.get<void>(`${apiBaseUrl}/ping`);
@@ -91,6 +102,19 @@ const genderIcon = (gender: Gender): React.ReactElement<SvgIconProps> => {
   }
 };
 
+const submitNewEntry = async (values: HealthEntryFormValues) => {
+  try {
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    const { data: newEntry } = await axios.post<Patient>(`${apiBaseUrl}/patients/${id}/entries`, values);
+    dispatch(addEntry(newEntry));
+    closeModal();
+  } catch (error) {
+    console.log(error.response.data);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    setError(error.response.data.error);
+  }
+};
+
 return (
     <div className="App">
         <Box>
@@ -116,6 +140,12 @@ return (
                 <HealthRatingBar showText={false} rating={1} />
               </TableCell>
             </TableRow>
+            <TableRow>
+              <TableCell>
+                <AddHealthEntryModal modalOpen={modalOpen} onSubmit={submitNewEntry} error={error} onClose={closeModal} />
+                <Button onClick={() => openModal()}>Add new Healthcheck entry</Button>
+              </TableCell>
+            </TableRow>
         </TableBody>
         </Table>
           
@@ -134,7 +164,6 @@ return (
             }
     </div>
 );
-
 };
 
 export default PatientPage;
