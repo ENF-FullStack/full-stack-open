@@ -11,6 +11,7 @@ import { Patient, Gender, Entry, Diagnosis } from '../types';
 import { setDiagnosisList, setFetchPatient, addEntry } from "../state";
 
 import HealthRatingBar from "../components/HealthRatingBar";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Box, Table, TableHead, Typography, SvgIconProps, Divider, Button } from "@material-ui/core";
 import { TableCell } from "@material-ui/core";
 import { TableRow } from "@material-ui/core";
@@ -106,6 +107,7 @@ const submitNewEntry = async (values: HealthEntryFormValues) => {
   try {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     const { data: newEntry } = await axios.post<Patient>(`${apiBaseUrl}/patients/${id}/entries`, values);
+    console.log('entryinfo @ client: ', newEntry);
     dispatch(addEntry(newEntry));
     closeModal();
   } catch (error) {
@@ -156,7 +158,7 @@ return (
                 <React.Fragment key={entry.id}>
                   {/* <Divider /> */}
                     <EntryDetails entry={entry} />
-                  <Divider />
+                  {/* <Divider /> */}
                 </React.Fragment>
               ))} 
             </div>

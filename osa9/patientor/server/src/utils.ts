@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import { Diagnosis, NewPatient, Gender, NewEntry, NewBaseEntry, EntryTypes, Discharge, SickLeave, HealthCheckRating } from './types';
+import { NewPatient, Gender, NewEntry, NewBaseEntry, EntryTypes, Discharge, SickLeave, HealthCheckRating } from './types';
 
 // export const assertNever = (value: never): never => {
 //     throw new Error(`Unhandled discriminated union member: ${JSON.stringify(value)}`);
@@ -96,8 +96,9 @@ const parseDischarge = (object: any, variable: string): Discharge => {
 };
 
 // const parseDiagnosisCodes = (diagnosisCodes: any, variable: string): Array<Diagnosis['code']> => {
-    const parseDiagnosisCodes = (diagnosisCodes: any): Array<Diagnosis['code']> => {
+    const parseDiagnosisCodes = (diagnosisCodes: any): Array<string> => {
     if (!diagnosisCodes || !(diagnosisCodes instanceof Array) || !diagnosisCodes.some(isNaN)) {
+        console.log('diagnosisCode @ validation: ', diagnosisCodes);
         throw new Error(`Error with variable: diagnosis codes @ utils`);
     }
     return diagnosisCodes;

@@ -22,8 +22,8 @@ osa 10
  sec 2 7h
  sec 3 8h
  sec 4 7h
-osa 11 19h
-osa 12 8h
+osa 11 28h
+osa 12 18h
 osa 13
 osa 14
 

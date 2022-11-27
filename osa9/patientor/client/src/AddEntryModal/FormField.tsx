@@ -122,7 +122,7 @@ export const SelectHealthField = ({ name, label, options }: SelectHealthFieldPro
 
   return (
     <FormControl style={{ width: 552, marginBottom: '30px' }}>
-      <InputLabel>Health rating</InputLabel>
+      <InputLabel>Diagnostic Entry</InputLabel>
       <Select multiple value={selectedDiagnoses} onChange={(e) => onChange(e.target.value as string[])} input={<Input />}>
         {stateOptions.map((option) => (
           <MenuItem key={option.key} value={option.value}>
