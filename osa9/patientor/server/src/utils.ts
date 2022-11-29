@@ -95,12 +95,11 @@ const parseDischarge = (object: any, variable: string): Discharge => {
     };
 };
 
-// const parseDiagnosisCodes = (diagnosisCodes: any, variable: string): Array<Diagnosis['code']> => {
-    const parseDiagnosisCodes = (diagnosisCodes: any): Array<string> => {
-    if (!diagnosisCodes || !(diagnosisCodes instanceof Array) || !diagnosisCodes.some(isNaN)) {
-        console.log('diagnosisCode @ validation: ', diagnosisCodes);
-        throw new Error(`Error with variable: diagnosis codes @ utils`);
+const parseDiagnosisCodes = (diagnosisCodes: unknown): Array<string> => {
+    if (!diagnosisCodes || !(diagnosisCodes instanceof Array)) {
+        throw new Error(`Error with variable: diagnosis codes`);
     }
+    // console.log("🚀 ~ file: utils.ts ~ line 105 ~ parseDiagnosisCodes ~ diagnosisCodes", diagnosisCodes);
     return diagnosisCodes;
 };
 
@@ -112,11 +111,16 @@ const validateEntry = ({ type, description, date, specialist, diagnosisCodes }: 
         description: parseString(description, 'description'),
         date: parseDate(date),
         specialist: parseString(specialist, 'specialist'),
+        diagnosisCodes: parseDiagnosisCodes(diagnosisCodes)
     };
 
-    if (diagnosisCodes) {
-        newBaseEntry.diagnosisCodes = parseDiagnosisCodes(diagnosisCodes);
-    }
+    //! diagnosisCodes validation disabled
+    // if (diagnosisCodes) {
+    //     newBaseEntry.diagnosisCodes = parseDiagnosisCodes(diagnosisCodes);
+    //     diagnosisCodes: (newBaseEntry.diagnosisCodes);
+        
+    // }
+    
     return newBaseEntry;
 };
 

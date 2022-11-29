@@ -28,8 +28,10 @@ const addPatient = (patient: NewPatient): Patient => {
 const addEntryToPatient = (entry: NewEntry, patient: Patient): Patient => {
     const uuidv4: string = uuid.v4();
     const allEntries: Entry = {...entry, id: uuidv4 };
-    console.log('entries @ server: ', allEntries);
+    console.log("🚀 ~ file: patients.ts ~ line 32 ~ addEntryToPatient ~ allEntries", allEntries)
+    
     const changedPatient: Patient = {...patient, entries: patient.entries.concat(allEntries)};
+    console.log("🚀 ~ file: patients.ts ~ line 34 ~ addEntryToPatient ~ changedPatient", changedPatient)
 
     patientData.filter((patient) => patient.id === changedPatient.id)[0].entries.unshift(allEntries);
     

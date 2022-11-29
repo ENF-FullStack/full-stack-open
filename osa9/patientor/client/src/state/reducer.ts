@@ -46,7 +46,7 @@ export const reducer = (state: State, action: Action): State => {
         }
       };
     case "FETCH_PATIENT":
-      console.log(action.payload);
+      // console.log(action.payload);
       return {
         ...state,
         [action.payload.id]: action.payload
@@ -76,29 +76,29 @@ export const reducer = (state: State, action: Action): State => {
 
 export const setPatientList = (patientListFromApi: Patient[]): Action => {
   return {
-    type: 'SET_PATIENT_LIST',
+    type: 'SET_PATIENT_LIST' as const,
     payload: patientListFromApi
   };
 };
 
 export const setAddPatient = (newPatient: Patient): Action => {
   return {
-    type: 'ADD_PATIENT',
+    type: 'ADD_PATIENT' as const,
     payload: newPatient
   };
 };
 
 export const setFetchPatient = (patient: Patient): Action => {
-  return { type: 'FETCH_PATIENT', payload: patient};
+  return { type: 'FETCH_PATIENT' as const, payload: patient};
 };
 
-export const setDiagnosisList = (diagnosisCodes: Diagnosis[]): Action => {
-  return { type: 'SET_DIAGNOSIS_LIST', payload: diagnosisCodes};
+export const setDiagnosisList = (diagnosisList: Diagnosis[]): Action => {
+  return { type: 'SET_DIAGNOSIS_LIST' as const, payload: diagnosisList};
 };
 
-export const addEntry = (content: Patient): Action => {
+export const addEntry = (patient: Patient): Action => {
   return {
-    type: "ADD_ENTRY",
-    payload: content
+    type: "ADD_ENTRY" as const,
+    payload: patient
   };
 };

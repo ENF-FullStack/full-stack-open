@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom";
 import { useStateValue } from "../state";
 import { apiBaseUrl } from "../constants";
 
-import { Patient, Gender, Entry, Diagnosis } from '../types';
+import { Patient, Gender, Entry, NewEntry, Diagnosis } from '../types';
 import { setDiagnosisList, setFetchPatient, addEntry } from "../state";
 
 import HealthRatingBar from "../components/HealthRatingBar";
@@ -20,7 +20,6 @@ import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 import TransgenderIcon from '@mui/icons-material/Transgender';
 import { HealthCheck, Hospital, OccupationHC } from "./EntryDetails";
-import { HealthEntryFormValues } from "../AddEntryModal/AddHealthEntryForm";
 import AddHealthEntryModal from '../AddEntryModal/index';
 
 const assertNever = (value: never): never => {
@@ -103,12 +102,12 @@ const genderIcon = (gender: Gender): React.ReactElement<SvgIconProps> => {
   }
 };
 
-const submitNewEntry = async (values: HealthEntryFormValues) => {
+const submitNewEntry = async (values: NewEntry) => {
   try {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    const { data: newEntry } = await axios.post<Patient>(`${apiBaseUrl}/patients/${id}/entries`, values);
-    console.log('entryinfo @ client: ', newEntry);
-    dispatch(addEntry(newEntry));
+    const { data: newPatient } = await axios.post<Patient>(`${apiBaseUrl}/patients/${id}/entries`, values);
+    console.log("🚀 ~ file: index.tsx ~ line 110 ~ submitNewEntry ~ newPatient", newPatient);
+    dispatch(addEntry(newPatient));
     closeModal();
   } catch (error) {
     console.log(error.response.data);

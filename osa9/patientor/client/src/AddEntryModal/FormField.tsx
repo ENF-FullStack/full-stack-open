@@ -110,8 +110,10 @@ export const SelectHealthField = ({ name, label, options }: SelectHealthFieldPro
     const field = "diagnosisCodes";
     const onChange = (data: string[]) => {    
       setDiagnoses([...data]);
+      console.log("🚀 ~ file: FormField.tsx ~ line 113 ~ onChange ~ data", data);
       setFieldTouched(field, true);
-      setFieldValue(field, selectedDiagnoses);
+      // setFieldValue(field, selectedDiagnoses);
+      setFieldValue(field, [...data]);
     };
   
     const stateOptions = diagnoses.map((diagnosis) => ({

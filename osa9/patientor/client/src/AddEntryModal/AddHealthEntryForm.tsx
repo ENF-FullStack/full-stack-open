@@ -3,13 +3,13 @@ import { Grid, Button } from "@material-ui/core";
 import { Field, Formik, Form } from "formik";
 
 import { TextField, DiagnosisSelection, SelectHealthField, HealthOption } from "./FormField";
-import { HealthCheckEntry, HealthCheckRating } from '../types';
+import { NewEntry, HealthCheckRating } from '../types';
 import { useStateValue } from "../state";
 
-export type HealthEntryFormValues = Omit<HealthCheckEntry, 'id'>;
+// export type HealthEntryFormValues = Omit<HealthCheckEntry, 'id'>;
 
 export interface Props {
-    onSubmit: (values: HealthEntryFormValues) => void;
+    onSubmit: (values: NewEntry) => void;
     onCancel: () => void;
 }
 
